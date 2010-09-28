@@ -1,0 +1,113 @@
+\documentclass[parskip*,DIV12,BCOR10mm,headsepline,twoside,a4paper,12pt]{scrreprt}
+\usepackage{courier}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{ae,aecompl}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.eps,.pdf,.png,.jpg,} %eps wurde nicht getestet, sollte in der neusten texlive Version funktionieren
+\graphicspath{{img/}}
+\usepackage[pdftex, colorlinks=true, linkcolor={black}, urlcolor={black}, citecolor={black}]{hyperref}
+\usepackage[numbers]{natbib}
+
+% \usepackage{paralist}
+% \usepackage{amsmath}
+% \usepackage{amsfonts}
+% \usepackage{theorem}
+% \usepackage{pf}
+% \usepackage{algorithm2e}\
+%\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor} 
+\usepackage{color}
+\usepackage{colortbl}
+\definecolor{hintergrund}{rgb}{1,1,0.9}
+\definecolor{colKeys}{rgb}{0,0,1}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.3,0.3,0.5}
+\definecolor{colString}{rgb}{0,0.5,0}
+\lstset{
+  float=hbp,
+  basicstyle=\ttfamily\fontsize{9pt}{10pt}\selectfont,
+  identifierstyle=\color{colIdentifier},
+  keywordstyle=\color{colKeys},
+  stringstyle=\color{colString},
+  commentstyle=\color{colComments},
+  columns=fixed,
+  tabsize=2,
+  frame=single,
+  extendedchars=false,
+  showspaces=false,
+  showstringspaces=true,
+  numbers=left,
+  numberstyle=\tiny,
+  breaklines=true,
+  backgroundcolor=\color{hintergrund},
+  breakautoindent=true,
+  captionpos=b
+}
+
+\renewcommand{\baselinestretch}{1.25}
+\newcommand{\bild}[4]       % Ne, Beschriftung, Referenz, Breite, Platzierung
+{
+     \begin{figure}[htbp]
+      \begin{center}
+        \includegraphics*[width=#4]{#1}
+        \caption{#2}
+        \label{#3}
+      \end{center}
+     \end{figure}
+}
+
+\newcommand{\lstsrcfile}[5] % 1: Beschriftung 2: Datei 3: Sprache 4: erste Zeile 5: letzte Zeile 
+{
+	\lstinputlisting[caption=#1language=#3, linerange={#4-#5}]{src/#2}
+}
+
+%\usepackage{url}
+\usepackage{multirow}
+%\usepackage{tabularx}
+\usepackage[automark]{scrpage2}
+
+\begin{document}
+\titlehead{
+	\centering
+	\includegraphics[width=0.5\columnwidth]{inc/fh-logo} \\
+	Fachbereich Technik \\
+	Abteilung Elektrotechnik und Informatik
+}
+
+\subject{Bachelor-Thesis}
+
+\title{Effiziente Speicherung virtueller Festplatten mit bestehender OpenSource-Software (Arbeitstitel)}
+
+\author{Bastian de Groot}
+
+\date{\today}
+
+\publishers{
+\begin{tabular}{ll}
+	\textbf{Prüfer} &  Prof. Dr. Jörg Thomaschewski \\
+	\textbf{Zweitprüfer} & Dr. Arvid Requate\\
+\end{tabular}
+}
+
+\maketitle
+
+\tableofcontents
+
+\include{chapter/01_Einleitung}
+\include{chapter/02_Analyse_CoW}
+\include{chapter/03_Analyse_Verteilung}
+\include{chapter/04_Synthese}
+\include{chapter/05_Zusammenfassung}
+
+\newpage
+\bibliographystyle{alphadin}
+\bibliography{mybibfile}
+
+\listoftables
+\listoffigures
+\lstlistoflistings
+
+\end{document}
