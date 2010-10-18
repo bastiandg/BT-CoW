@@ -1,6 +1,16 @@
 \chapter{Analyse Copy on Write}
-\section{Sparse-Files}
-\section{blktap2/Qcow}
-\section{blktap2/vhd}
+\section{Sparse-Dateien}
+Eine Sparse-Datei ist eine Datei die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Eine Sparse-Datei ist kein eigenes Imageformat sondern eine Optimierungsstrategie. \cite{sparse}
+\section{qcow2}
+qcow2 ist ein Imageformat welches im Rahmen des qemu Projekts entwickelt wurde. Es ist der Nachfolger des ebenfalls aus dem qemu Projekt stammenden Formats qcow. \cite{qcowmarkmc} \cite{qemuwiki}
+\section{vhd}
+vhd ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imageformats wurde von Microsoft im Zuge des ``Microsoft Open Specification Promise'' freigegeben. Seit der Freigabe der Spezifikation bieten einige Open Source Virtualisierungstechnologien wie qemu, Xen oder VirtualBox die Möglichkeit dieses Format zu verwenden. \cite{msosp} \cite{vhdspec}
 \section{dm-snapshots}
-\section{LVM-Snapshots} 
+Die dm-snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Treiber im Linux-Kernel. Er erstellt virtuelle Gerätedateien, die mit bestimmten Features wie zum Beispiel Verschlüsselung ausgestattet sind. Bei dm-snapshots wird eine solche virtuelle Gerätedatei erstellt. Sie wird aus zwei anderen Gerätedateien zusammengesetzt. Die erste Gerätedatei ist der Ausgangspunkt, wenn an daran Änderungen vorgenommen werden, werden sie als Differenz in der zweiten Gerätedatei gespeichert. \cite{dmmbroz} \cite{dmkerneldoc}
+%\subsection{Vorteile}
+%hohe Entwicklungsreife \\
+%garantierte Weiterentwicklung
+%\subsection{Nachteile}
+%Aufwendige Einrichtung
+\section{LVM-Snapshots}
+LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-Schicht die über den eigentlichen Hardware-Festplatten einzuordnen ist. Mit LVM ist es möglich virtuelle Partitionen (logical volumes) anzulegen
