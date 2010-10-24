@@ -1,6 +1,9 @@
 \chapter{Analyse Copy on Write}
 \section{Sparse-Dateien}
 Eine Sparse-Datei ist eine Datei die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Eine Sparse-Datei ist kein eigenes Imageformat sondern eine Optimierungsstrategie. \cite{sparse}
+
+\bild{Sparse}{Sparse-Datei}{pic:sparse}{400px}
+
 \section{qcow2}
 qcow2 ist ein Imageformat welches im Rahmen des qemu Projekts entwickelt wurde. Es ist der Nachfolger des ebenfalls aus dem qemu Projekt stammenden Formats qcow. \cite{qcowmarkmc} \cite{qemuwiki}
 
@@ -15,7 +18,7 @@ qcow2 ist ein Imageformat welches im Rahmen des qemu Projekts entwickelt wurde. 
 \end{itemize}
 
 \section{vhd}
-vhd ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imageformats wurde von Microsoft im Zuge des ``Microsoft Open Specification Promise'' freigegeben. Seit der Freigabe der Spezifikation bieten einige Open Source Virtualisierungstechnologien wie qemu, Xen oder VirtualBox die Möglichkeit dieses Format zu verwenden. \cite{msosp} \cite{vhdspec}
+vhd ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imageformats wurde von Microsoft im Zuge des ``Microsoft Open Specification Promise'' freigegeben. Seit der Freigabe der Spezifikation bieten einige Open Source Virtualisierungstechnologien wie qemu, Xen oder VirtualBox die Möglichkeit dieses Format zu verwenden. \cite{msosp} \cite{vhdspec} %\gls{test}
 
 \subsection{Vorteile}
 \begin{itemize}
@@ -55,4 +58,5 @@ LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-S
  \item Aufwendige Einrichtung
  \item Migration schwierig
  \item Live-Migration nicht möglich
+ \item Nutzung von Sparse-Files schwer umsetzbar
 \end{itemize}

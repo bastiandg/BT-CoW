@@ -5,10 +5,18 @@
 \usepackage[ngerman]{babel}
 \usepackage{ae,aecompl}
 \usepackage{graphicx}
-\DeclareGraphicsExtensions{.eps,.pdf,.png,.jpg,} %eps wurde nicht getestet, sollte in der neusten texlive Version funktionieren
+\DeclareGraphicsExtensions{.pdf,.png,.jpg,} %eps wurde nicht getestet, sollte in der neusten texlive Version funktionieren
 \graphicspath{{img/}}
 \usepackage[pdftex, colorlinks=true, linkcolor={black}, urlcolor={black}, citecolor={black}]{hyperref}
 \usepackage[numbers]{natbib}
+
+\usepackage[
+nonumberlist] %keine Seitenzahlen anzeigen
+%toc,          %Einträge im Inhaltsverzeichnis
+%chapter]      %im Inhaltsverzeichnis auf section-Ebene erscheinen
+{glossaries}
+\makeglossaries
+\renewcommand*{\glspostdescription}{}
 
 % \usepackage{paralist}
 % \usepackage{amsmath}
@@ -48,7 +56,7 @@
 }
 
 \renewcommand{\baselinestretch}{1.25}
-\newcommand{\bild}[4]       % Ne, Beschriftung, Referenz, Breite, Platzierung
+\newcommand{\bild}[4]       % Dateiname, Beschriftung, Hyperlink-Marke, Breite
 {
      \begin{figure}[htbp]
       \begin{center}
@@ -95,7 +103,7 @@
 \maketitle
 
 \tableofcontents
-
+\include{glossar}
 \include{chapter/01_Einleitung}
 \include{chapter/02_Analyse_CoW}
 \include{chapter/03_Analyse_Verteilung}
@@ -103,6 +111,10 @@
 \include{chapter/05_Zusammenfassung}
 
 \newpage
+%Glossar ausgeben
+\printglossary[style=altlist,title=Glossar]
+
+
 \bibliographystyle{alphadin}
 \bibliography{mybibfile}
 
