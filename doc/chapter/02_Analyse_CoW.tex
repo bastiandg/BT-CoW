@@ -14,7 +14,7 @@ qcow2 ist ein Imageformat welches im Rahmen des qemu Projekts entwickelt wurde. 
 
 \subsection{Nachteile}
 \begin{itemize}
- \item ?
+ \item 
 \end{itemize}
 
 \section{vhd}
@@ -28,6 +28,7 @@ vhd ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imag
 \subsection{Nachteile}
 \begin{itemize}
  \item Weiterentwicklung ist fragwürdig
+ \item Verwendung von Copy on Write mit KVM nicht möglich
 \end{itemize}
 
 \section{dm-snapshots}
@@ -42,6 +43,7 @@ Die dm-snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Tr
 \subsection{Nachteile}
 \begin{itemize}
  \item Aufwendige Einrichtung
+ \item unabhängig von Virtualisierungstechnik
 \end{itemize}
 
 \section{LVM-Snapshots}
@@ -51,6 +53,7 @@ LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-S
 \begin{itemize}
  \item hohes Entwicklungsstadium
  \item garantierte Weiterentwicklung
+ \item unabhängig von Virtualisierungstechnik
 \end{itemize}
 
 \subsection{Nachteile}
@@ -58,5 +61,13 @@ LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-S
  \item Aufwendige Einrichtung
  \item Migration schwierig
  \item Live-Migration nicht möglich
- \item Nutzung von Sparse-Files schwer umsetzbar
+ \item Nutzung von Sparse-Dateien schwer umsetzbar
 \end{itemize}
+
+\section{Benchmarks}
+Ein wichtiger Punkt für die Entscheidung welche Copy on Write Implementierung optimal ist, ist die Schreib- und Lesegeschwindigkeit. Hierbei gibt es zwei Zugriffsarten, einmal den sequentiellen Zugriff und den wahlfreien oder auch zufälligen Zugriff. Die Testergebnisse werden in diesem Kapitel zusammenfassend aufgeführt. Die kompletten Testergebnisse befinden sich im Anhang.
+
+\subsection{IOzone}
+IOzone ist ein Tool mit dem in einer Reihe von unterschiedlichen Tests die Lese- und Schreib-Geschwindigkeit überprüft werden kann. Es wird hier zur Überprüfung der sequentiellen Lese- und Schreibgeschwindigkeit verwendet.
+\subsection{Bonnie++}
+Bonnie++ ist wie IOzone ein Tool zum Testen von Festplatten. Es wird hier zur Überprüfung der sequentiellen Lese- und Schreibgeschwindigkeit sowie zum Testen des wahlfreien Zugriffs.
