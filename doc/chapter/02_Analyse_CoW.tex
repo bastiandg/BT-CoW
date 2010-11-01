@@ -1,4 +1,4 @@
-\chapter{Analyse Copy on Write}
+\chapter{Analyse Copy-on-Write}
 \section{Sparse-Dateien}
 Eine Sparse-Datei ist eine Datei, die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Eine Sparse-Datei ist kein eigenes Imageformat sondern eine Optimierungsstrategie. \cite{sparse}
 
@@ -65,7 +65,7 @@ LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-S
 \end{itemize}
 
 \section{Benchmarks}
-Ein wichtiger Punkt für die Entscheidung welche Copy on Write Implementierung optimal ist, ist die Schreib- und Lesegeschwindigkeit. Hierbei gibt es zwei Zugriffsarten, einmal den sequentiellen Zugriff und den wahlfreien oder auch zufälligen Zugriff. Die Testergebnisse werden in diesem Kapitel zusammenfassend aufgeführt. Die kompletten Testergebnisse befinden sich im Anhang.
+Ein wichtiger Punkt für die Entscheidung welche Copy-on-Write Implementierung optimal ist, ist die Lese- und Schreibgeschwindigkeit. Hierbei gibt es zwei Zugriffsarten, einmal den sequentiellen Zugriff und den wahlfreien oder auch zufälligen Zugriff. Die Testergebnisse werden in diesem Kapitel zusammenfassend aufgeführt. Die kompletten Testergebnisse befinden sich im Anhang.
 
 \subsection{IOzone}
 IOzone ist ein Tool mit dem in einer Reihe von unterschiedlichen Tests die Lese- und Schreib-Geschwindigkeit überprüft werden kann. Es wird hier zur Überprüfung der sequentiellen Lese- und Schreibgeschwindigkeit verwendet.
