@@ -1,11 +1,11 @@
 \chapter{Analyse Copy on Write}
 \section{Sparse-Dateien}
-Eine Sparse-Datei ist eine Datei die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Eine Sparse-Datei ist kein eigenes Imageformat sondern eine Optimierungsstrategie. \cite{sparse}
+Eine Sparse-Datei ist eine Datei, die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Eine Sparse-Datei ist kein eigenes Imageformat sondern eine Optimierungsstrategie. \cite{sparse}
 
 \bild{Sparse}{Sparse-Datei}{pic:sparse}{400px}
 
 \section{qcow2}
-qcow2 ist ein Imageformat welches im Rahmen des qemu Projekts entwickelt wurde. Es ist der Nachfolger des ebenfalls aus dem qemu Projekt stammenden Formats qcow. \cite{qcowmarkmc} \cite{qemuwiki}
+Das Imageformat qcow2 ist im Rahmen des qemu Projekts entwickelt wurde. Es ist der Nachfolger des ebenfalls aus dem qemu Projekt stammenden Formats qcow. \cite{qcowmarkmc} \cite{qemuwiki}
 
 \subsection{Vorteile}
 \begin{itemize}
@@ -14,11 +14,11 @@ qcow2 ist ein Imageformat welches im Rahmen des qemu Projekts entwickelt wurde. 
 
 \subsection{Nachteile}
 \begin{itemize}
- \item 
+ \item Kompatibilitätsprobleme mit Xen und anderen offenen Virtualisierungstechniken (z.B. VirtualBox)
 \end{itemize}
 
 \section{vhd}
-vhd ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imageformats wurde von Microsoft im Zuge des ``Microsoft Open Specification Promise'' freigegeben. Seit der Freigabe der Spezifikation bieten einige Open Source Virtualisierungstechnologien wie qemu, Xen oder VirtualBox die Möglichkeit dieses Format zu verwenden. \cite{msosp} \cite{vhdspec} %\gls{test}
+Das Format vhd ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imageformats wurde von Microsoft im Zuge des ``Microsoft Open Specification Promise'' freigegeben. Seit der Freigabe der Spezifikation bieten einige Open Source Virtualisierungstechnologien wie qemu, Xen oder VirtualBox die Möglichkeit dieses Format zu verwenden. \cite{msosp} \cite{vhdspec} %\gls{test}
 
 \subsection{Vorteile}
 \begin{itemize}
@@ -37,7 +37,7 @@ Die dm-snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Tr
 \subsection{Vorteile}
 \begin{itemize}
  \item hohes Entwicklungsstadium
- \item garantierte Weiterentwicklung
+ \item sichere Weiterentwicklung
 \end{itemize}
 
 \subsection{Nachteile}
@@ -47,19 +47,19 @@ Die dm-snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Tr
 \end{itemize}
 
 \section{LVM-Snapshots}
-LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-Schicht die über den eigentlichen Hardware-Festplatten einzuordnen ist. Es basiert auf Device Mapper. Mit LVM ist es möglich virtuelle Partitionen (logical volumes) anzulegen. Diese können sich über mehrere Festplatten-Partitionen erstrecken und Funktionen wie Copy on Write besitzen. \cite{lvmhowto} \cite{lvmselflinux} \cite{lvmsource}
+LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-Schicht die über den eigentlichen Hardware-Festplatten einzuordnen ist. Es basiert auf Device Mapper. LVM ermöglicht das Anlegen von virtuelle Partitionen (logical volumes). Diese können sich über mehrere Festplatten-Partitionen erstrecken und Funktionen wie Copy-on-Write bereitstellen. \cite{lvmhowto} \cite{lvmselflinux} \cite{lvmsource}
 
 \subsection{Vorteile}
 \begin{itemize}
  \item hohes Entwicklungsstadium
- \item garantierte Weiterentwicklung
+ \item sichere Weiterentwicklung
  \item unabhängig von Virtualisierungstechnik
 \end{itemize}
 
 \subsection{Nachteile}
 \begin{itemize}
  \item Aufwendige Einrichtung
- \item Migration schwierig
+% \item Migration schwierig
  \item Live-Migration nicht möglich
  \item Nutzung von Sparse-Dateien schwer umsetzbar
 \end{itemize}
@@ -70,4 +70,4 @@ Ein wichtiger Punkt für die Entscheidung welche Copy on Write Implementierung o
 \subsection{IOzone}
 IOzone ist ein Tool mit dem in einer Reihe von unterschiedlichen Tests die Lese- und Schreib-Geschwindigkeit überprüft werden kann. Es wird hier zur Überprüfung der sequentiellen Lese- und Schreibgeschwindigkeit verwendet.
 \subsection{Bonnie++}
-Bonnie++ ist wie IOzone ein Tool zum Testen von Festplatten. Es wird hier zur Überprüfung der sequentiellen Lese- und Schreibgeschwindigkeit sowie zum Testen des wahlfreien Zugriffs.
+Bonnie++ dient wie IOzone als Tool zum Testen von Festplatten. Es wird hier zur Überprüfung der sequentiellen Lese- und Schreibgeschwindigkeit sowie zum Testen des wahlfreien Zugriffs verwendet.

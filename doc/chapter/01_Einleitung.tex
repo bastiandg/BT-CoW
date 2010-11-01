@@ -1,22 +1,22 @@
 \chapter{Einleitung}
 
-Virtualisierung ist die Auteilung von Hardwareressourcen wie CPU, RAM oder Festplatten an virtuelle Betriebsysteminstanzen. Es gibt unterschiedliche technische Ansätze der Virtualisierung, wie Paravirtualisierung oder Vollvirtualisierung. Diese Kategorisierung bezieht sich darauf wie der Hypervisor die vorhandene Hardware der virtuellen Instanz bereitstellt. Auf diesem Gebiet gibt es eine sehr aktive Entwicklung. \cite{vor}
+Virtualisierung ist die Auteilung von Hardwareressourcen wie CPU, RAM oder Festplatten an virtuelle Betriebsysteminstanzen. Es gibt unterschiedliche technische Ansätze der Virtualisierung, wie Paravirtualisierung oder Vollvirtualisierung. Diese Kategorisierung bezieht sich darauf, wie der Hypervisor die vorhandene Hardware der virtuellen Instanz bereitstellt. Auf diesem Gebiet gibt es eine sehr aktive Entwicklung. \cite{baun}
 
-Wenig beachtet bei der Entwicklung von Virtualisierungssoftware ist jedoch die Speicherung von virtuellen Festplatten. In dieser Arbeit wird dieser Punkt aufgegriffen und die Möglichkeit der Optimierung mit der Copy on Write Strategie beleuchtet.
+Wenig beachtet bei der Entwicklung von Virtualisierungssoftware ist jedoch die Speicherung von virtuellen Festplatten. In dieser Arbeit wird dieser Punkt aufgegriffen und die Möglichkeit der Optimierung mit der Copy-on-Write Strategie beleuchtet.
 
-Copy on Write ist eine Optimierungsstrategie, die dazu dient unnötiges Kopieren zu vermeiden und somit die für Bereitstellung einer geclonten virtuellen Maschine benötigte Zeit zu minimieren. Zusätzlich werden die Systemressourcen (Storage, IO, CPU) des physikalischen Virtualisierungsservers geschont. Copy on Write Images für Desktopvirtualisierung nutzen diese Strategie. Hierbei wird nicht für jeden Benutzer ein eigenes Image kopiert, sondern alle Benutzer verwenden ein Master-Image. Falls ein Benutzer Änderungen an diesem Master-Image vornimmt, werden die Änderungen separat abgespeichert. 
+Copy-on-Write ist eine Optimierungsstrategie, die dazu dient unnötiges Kopieren zu vermeiden und somit die für Bereitstellung einer geclonten virtuellen Maschine benötigte Zeit zu minimieren. Zusätzlich werden die Systemressourcen (Storage, IO, CPU) des physikalischen Virtualisierungsservers geschont. Copy-on-Write Images für Desktopvirtualisierung nutzen diese Strategie. Hierbei wird nicht für jeden Benutzer ein eigenes Image kopiert, sondern alle Benutzer verwenden ein Master-Image. Falls ein Benutzer Änderungen an diesem Master-Image vornimmt, werden die Änderungen separat abgespeichert. 
 
 \section{Zieldefinition}
-Ziel dieser Arbeit soll es sein, Möglichkeiten zur effizienten Speicherung von virtuellen Festplatten aufzuzeigen. Hierbei werden in dieser die bestehenden \gls{oss} Lösungen. Im Anschluss wird anhand von objektiven Kriterien die optimale Lösung herausgearbeitet. Außerdem soll betrachtet werden wie die für das Copy on Write benötigten Master-Images im Netzwerk optimal verteilt werden können. 
+Ziel dieser Arbeit soll es sein, Möglichkeiten zur effizienten Speicherung von virtuellen Festplatten aufzuzeigen. Hierbei wird in dieser Arbeit ausschließlich auf bestehende \gls{oss} Lösungen zurückgegriffen. Diese Lösungen werden miteinander verglichen und eine effiziente Lösung herausgearbeitet. Außerdem wird betrachtet, wie die für das Copy-on-Write benötigten Master-Images im Netzwerk effizient verteilt werden können. 
 
 \section{Vorgehen und Kurzzusammenfassung} 
 
-Zunächst werden die vorhandenen Softwarelösungen für Copy on Write und für die Verteilung der Master-Images erläutert. Danach werden diese objektiv miteinander verglichen. Nachdem die besten Lösungen beider Kategorien gefunden wurden, werden Softwaretools erstellt, die die Nutzung der gefundenen Lösung ohne tiefgreifende Vorkenntnisse ermöglicht.
+Zunächst werden die vorhandenen Softwarelösungen für Copy-on-Write und für die Verteilung der Master-Images erläutert. Danach werden diese anhand verschiedener anwendungsrelevanter Kriterien miteinander verglichen. Nachdem die besten Lösungen beider Kategorien gefunden wurden, werden Softwaretools erstellt, die die Nutzung der gefundenen Lösung ohne tiefgreifende Vorkenntnisse ermöglicht.
 
 \subsection{Quellen}
 Diese Arbeit enthält neben den herkömmlichen Quellen auch Mailinglisten- und Forenbeiträge, sowie Blogeinträge. Hierdrauf soll im Folgenden eingegangen werden.
 
-Quellenangaben sind im Bereich der \gls{oss} Software schwer zu machen. Es gibt keine einheitliche Dokumentation der Software. Häufig sind die Informationen nicht an einer zentralen Stelle vereint, sondern liegen verstreut im Internet in Foren, Blogs, Mailinglisten oder auch in Manpages und den Quelltexten. Die Relevanz und die Richtigkeit einer solcher Quellen ist schwer zu bewerten, da Blogs, Mailinglisten und Foren keinen Beschränkungen unterliegen. Das heißt jeder der Willens ist zu einem Thema etwas zu schreiben, kann dies auch tun.
+Quellenangaben sind im Bereich der \gls{oss} Software schwer zu machen. Es gibt keine einheitliche Dokumentation der Software. Häufig sind die Informationen nicht an einer zentralen Stelle vereint, sondern liegen verstreut im Internet in Foren, Blogs, Mailinglisten oder auch in Manpages und den Quelltexten selbst. Die Relevanz und die Richtigkeit einer solcher Quellen ist schwer zu bewerten, da Blogs, Mailinglisten und Foren keinen Beschränkungen unterliegen. Das heißt, jeder der Willens ist zu einem Thema etwas zu schreiben, kann dies auch tun.
 
 Die oben genannte Verstreuung birgt, neben der schwierigen Bewertbarkeit der Richtigkeit und Relevanz, ein weiteres Problem. Da sehr viele Autoren zum einem Thema etwas schreiben, werden unterschiedliche Begriffe synonym verwendet oder sind mehrdeutig.
 
