@@ -1,10 +1,10 @@
 \chapter{Analyse Copy-on-Write}
-Für das Erstellen mehrerer gleichartiger Virtueller Maschinen benötigt man mehrere Virtuelle Festplatten. Das kann man auf herkömmliche Art und Weise lösen, in dem ein vorhandenes Festplattenimage n mal kopiert wird. Durch das häufige Kopieren entstehen allerdings große Mengen an Daten. Außerdem benötigt es viel Zeit Festplattenimages zu kopieren. Um diesen beiden Problemen entgegen zu wirken gibt es Copy-on-Write. Wie in Abbildung \ref{pic:cow} zu sehen ist, wird bei Copy-on-Write nicht das gesamte Image kopiert. Es werden in dem Copy-on-Write-Image nur die Veränderungen zu dem so genannten Master- oder Quellimage gespeichert. Für die Platzersparnis werden Sparse-Dateien genutzt welche im Folgenden erklärt werden. Außerdem werden die unterschiedlichen Verfahren zur Verwendung von Copy-on-Write erläutert und analysiert.
+Für das Erstellen mehrerer gleichartiger Virtueller Maschinen benötigt man mehrere Virtuelle Festplatten. Das kann man auf herkömmliche Art und Weise lösen, in dem ein vorhandenes Festplattenimage n mal kopiert wird. Durch das häufige Kopieren entstehen allerdings große Mengen an Daten. Außerdem benötigt es viel Zeit Festplattenimages zu kopieren. Um diesen beiden Problemen entgegen zu wirken wurden Copy-on-Write-Strategien entwickelt. Wie in Abbildung \ref{pic:cow} schematisch dargestellt wird, wird bei Copy-on-Write nicht das gesamte Image kopiert. Es werden in dem Copy-on-Write-Image nur die Veränderungen zu dem so genannten Master- oder Quellimage gespeichert. Für die Platzersparnis werden Sparse-Dateien genutzt, welche im Folgenden erklärt werden. Außerdem werden die unterschiedlichen Verfahren zur Verwendung von Copy-on-Write erläutert und analysiert.
 
 \bild{copyonwrite}{Copy-on-Write}{pic:cow}{420px}
 
 \section{Sparse-Dateien}
-Eine Sparse-Datei ist eine Datei, die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Die Abbildung \ref{pic:sparse} zeigt, dass der tatsächlich benutzte Speicherplatz auf der Festplatte weitaus geringer sein kann als die eigentliche Dateigröße. Eine Sparse-Datei ist kein eigenes Imageformat sondern eine Optimierungsstrategie. Sie verhilft Copy-on-Write-Images zu einer großen Platzersparnis. In Imageformaten wie qcow2 oder vhd ist die Optimierungsstrategie ein fester Bestandteil. \cite{sparse}
+Eine Sparse-Datei ist eine Datei, die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Die Abbildung \ref{pic:sparse} zeigt, dass der tatsächlich benutzte Speicherplatz auf der Festplatte weitaus geringer sein kann als die eigentliche Dateigröße. Eine Sparse-Datei ist kein eigenes Imageformat sondern eine Optimierungsstrategie. Sie verhilft Copy-on-Write-Images zu einer großen Platzersparnis. In Imageformaten wie qcow2 oder VHD ist diese Optimierungsstrategie ein fester Bestandteil. \cite{sparse}
 
 \bild{Sparse}{Sparse-Datei}{pic:sparse}{420px}
 
@@ -14,34 +14,36 @@ Das Imageformat qcow2 ist im Rahmen des qemu Projekts entwickelt wurde. Es ist d
 \textbf{Vorteile}
 \begin{itemize}
  \item einfache Einrichtung
+ \item aktive Entwicklung im Rahmen der Projekte KVM und qemu
 \end{itemize}
 
 \textbf{Nachteile}
 \begin{itemize}
- \item Kompatibilitätsprobleme mit Xen und anderen offenen Virtualisierungstechniken (z.B. VirtualBox)
+ \item aktuell fehlende Unterstützung durch mit Xen und andere offene Virtualisierungstechniken (z.B. VirtualBox)
 \end{itemize}
 
-\section{vhd}
-Das Format vhd ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imageformats wurde von Microsoft im Zuge des ``Microsoft Open Specification Promise'' freigegeben. Seit der Freigabe der Spezifikation bieten einige Open Source Virtualisierungslösungen wie qemu, Xen oder VirtualBox die Möglichkeit dieses Format zu verwenden. \cite{msosp} \cite{vhdspec} %\gls{test}
+\section{VHD}
+Das Format VHD ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imageformats wurde von Microsoft im Zuge des ``Microsoft Open Specification Promise'' freigegeben. Seit der Freigabe der Spezifikation bieten einige Open Source Virtualisierungslösungen wie qemu, Xen oder VirtualBox die Möglichkeit dieses Format zu verwenden. \cite{msosp} \cite{vhdspec} %\gls{test}
 
 \textbf{Vorteile}
 \begin{itemize}
  \item einfache Einrichtung
+ \item Unterstützung durch Softwarehersteller mit hoher Marktakzeptanz
 \end{itemize}
 
 \textbf{Nachteile}
 \begin{itemize}
- \item Weiterentwicklung ist fragwürdig
- \item Verwendung von Copy-on-Write mit KVM nicht möglich
+ \item Weiterentwicklung scheint derzeit fragwürdig
+ \item Verwendung der Copy-on-Write-Funktion von VHD mit KVM nicht möglich
 \end{itemize}
 
 \section{dm-snapshots}
-Die dm-snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Treiber im Linux-Kernel. Er erstellt virtuelle Gerätedateien, die mit bestimmten Features wie zum Beispiel Verschlüsselung ausgestattet sind. Bei dm-snapshots wird eine solche virtuelle Gerätedatei erstellt. Sie wird aus zwei anderen Gerätedateien zusammengesetzt. Die erste Gerätedatei ist der Ausgangspunkt, wenn an daran Änderungen vorgenommen werden, werden sie als Differenz in der zweiten Gerätedatei gespeichert. Dm-snapshots benötigen keine Unterstützung der Virtualisierungstechnik, da sie für diese nicht von physikalischen Festplattenpartitionen unterscheidbar sind. Dieses ist nicht nur ein Vorteil, sondern zugleich auch ein Nachteil. Es muss immer vor dem Starten einer virtuellen Maschine das Copy-on-Write-Image und das Masterimage zu einer Gerätedatei verbunden werden. \cite{dmmbroz} \cite{dmkerneldoc}
+Die dm-snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Treiber im Linux-Kernel. Er erstellt virtuelle Gerätedateien, die mit bestimmten erweiterten Features wie zum Beispiel Verschlüsselung ausgestattet sind. Bei dm-snapshots wird eine solche virtuelle Gerätedatei erstellt, die aus zwei anderen Gerätedateien zusammengesetzt wird. Die erste Gerätedatei ist der Ausgangspunkt, wenn daran Änderungen vorgenommen werden, werden sie als Differenz in der zweiten Gerätedatei gespeichert. Dm-snapshots benötigen keine Unterstützung der Virtualisierungstechnik, da sie für diese nicht von physikalischen Festplattenpartitionen unterscheidbar sind. Dieses ist nicht nur ein Vorteil, sondern zugleich auch ein Nachteil. Es muss immer vor dem Starten einer virtuellen Maschine das Copy-on-Write-Image und das Masterimage zu einer Gerätedatei verbunden werden. \cite{dmmbroz} \cite{dmkerneldoc}
 
 \textbf{Vorteile}
 \begin{itemize}
  \item hohes Entwicklungsstadium
- \item sichere Weiterentwicklung
+ \item gesicherte Weiterentwicklung
  \item unabhängig von Virtualisierungstechnik
 \end{itemize}
 
@@ -52,12 +54,12 @@ Die dm-snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Tr
 \end{itemize}
 
 \section{LVM-Snapshots}
-LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-Schicht die über den eigentlichen Hardware-Festplatten einzuordnen ist. Es basiert auf Device Mapper. LVM ermöglicht das Anlegen von virtuelle Partitionen (logical volumes). Diese können sich über mehrere Festplatten-Partitionen erstrecken und Funktionen wie Copy-on-Write bereitstellen. \cite{lvmhowto} \cite{lvmselflinux} \cite{lvmsource}
+LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-Schicht die über den eigentlichen Hardware-Festplatten einzuordnen ist. Sie basiert auf Device Mapper. LVM ermöglicht das Anlegen von virtuelle Partitionen (logical volumes). Diese können sich über mehrere Festplatten-Partitionen erstrecken und Funktionen wie Copy-on-Write bereitstellen. \cite{lvmhowto} \cite{lvmselflinux} \cite{lvmsource}
 
 \textbf{Vorteile}
 \begin{itemize}
  \item hohes Entwicklungsstadium
- \item sichere Weiterentwicklung
+ \item gesicherte Weiterentwicklung
  \item unabhängig von Virtualisierungstechnik
 \end{itemize}
 
@@ -73,7 +75,7 @@ LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-S
 Ein wichtiger Punkt für die Entscheidung welche Copy-on-Write Implementierung optimal ist, ist die Lese- und Schreibgeschwindigkeit. Hierbei gibt es zwei Zugriffsarten, einmal den sequentiellen Zugriff und den wahlfreien oder auch zufälligen Zugriff. Die Testergebnisse werden in diesem Kapitel zusammenfassend aufgeführt. Die kompletten Testergebnisse befinden sich im Anhang.
 
 \subsection{Testbedingungen}
-Das Hostsystem für die Performance-Tests hat einen AMD Athlon II X2 250 Prozessor und 4 GiB RAM. Als Betriebsystem kommt ein 64 bit Debian testing zum Einsatz. Bei den KVM-Tests ist 2.6.32-5-amd64 der eingesetzte Kernel, bei Xen ist es 2.6.32-5-xen-amd64.
+Das Hostsystem für die Performance-Tests hat einen AMD Athlon II X2 250 Prozessor und 4 GiB RAM. Als Betriebsystem kommt ein 64 bit Debian squeeze zum Einsatz. Bei den KVM-Tests ist 2.6.32-5-amd64 der eingesetzte Kernel, für Xen wird der gleiche Kernel mit Xen-Unterstützung verwendet.
 
 Während der Performance-Tests laufen neben der Virtuellen Maschine auf dem Hostsystem keine anderen aktiven Programme, die das Ergebnis verfälschen könnten. Als Referenz zu den Copy-on-Write-Techniken werden jeweils eine echte Festplattenpartition und eine Sparse-Datei verwendet. Zum Testen der Performance werden IOzone und Bonnie++ eingesetzt.
 
@@ -103,7 +105,7 @@ Beim zufälligen Zugriff auf die Festplatte ist unter Xen vhd abgeschlagen hinte
 Die Testergebnisse zeigen, dass es Geschwindigkeitsunterschiede zwischen den Copy-on-Write-Technniken gibt. Diese Unterschiede in der Geschwindigkeit sind aber nicht so gravierend, dass man einzelne Copy-on-Write-Lösungen aufgrund der Performance-Tests kategorisch ausschließen müsste. Dennoch sind besonders die Vorteile von qcow2 in Verbindung mit KVM zu erwähnen. Für Xen gibt es kein Image-Format, dass ähnliche Testergebnisse wie qcow2 in Verbindung mit KVM vorweisen kann. 
 
 \section{Fazit}
-Aufgrund des unterschiedlichen Verhaltens der Copy-on-Write-Techniken mit KVM und Xen, wird auch für die beiden Virtualisierungslösungen ein jeweiliges Fazit gezogen.
+Aufgrund des unterschiedlichen Implementierungen der Copy-on-Write-Techniken in KVM und Xen, wird auch für die beiden Virtualisierungslösungen ein jeweiliges Fazit gezogen.
 
 \subsection{KVM}
 Unter KVM gibt es die Alternativen dm-snapshots LVM-Snapshots oder qcow2. Das von Microsoft entwickelte vhd kommt nicht in Frage. KVM unterstützt zwar das vhd-Format, jedoch nicht die Copy-on-Write-Funktion des Formats. 

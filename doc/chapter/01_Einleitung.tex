@@ -1,25 +1,26 @@
 \chapter{Einleitung}
-
-Betriebsystemvirtualisierung ist, wenn sich mehrere virtuelle Betriebsysteminstanzen Hardwareressourcen wie CPU, RAM oder Festplatten teilen. Der Virtualisierungskern (Hypervisor) stellt den virtuellen Betriebsysteminstanzen eine in Software und Hardware realisierte Umgebung zur Verfügung, die für die darin laufenden Instanzen kaum von einer echten Hardwareumgebung unterscheidbar sind. Es gibt unterschiedliche technische Ansätze der Virtualisierung, wie Paravirtualisierung oder Vollvirtualisierung. Diese Kategorisierung bezieht sich darauf, wie der Hypervisor die vorhandene Hardware der virtuellen Instanz bereitstellt. Auf diesem Gebiet gibt es eine sehr aktive Entwicklung. \cite{andrep} \cite{baun}
+Von ``Betriebsystemvirtualisierung'' spricht man, wenn sich mehrere virtuelle Betriebsysteminstanzen Hardwareressourcen wie CPU, RAM oder Festplatten teilen. Der Virtualisierungskern (Hypervisor) stellt den virtuellen Betriebsysteminstanzen eine in Software und Hardware realisierte Umgebung zur Verfügung, die für die darin laufenden Instanzen kaum von einer echten Hardwareumgebung unterscheidbar sind. Es gibt unterschiedliche technische Ansätze der Virtualisierung, wie Paravirtualisierung oder Vollvirtualisierung. Diese Kategorisierung bezieht sich darauf, wie der Hypervisor die vorhandene Hardware für die virtuelle Instanz bereitstellt. Auf diesem Gebiet gibt es eine sehr aktive Entwicklung. \cite{andrep} \cite{baun}
 
 Wenig beachtet bei der Entwicklung von Virtualisierungssoftware ist jedoch die Speicherung von virtuellen Festplatten. In dieser Arbeit wird dieser Punkt aufgegriffen und die Möglichkeit der Optimierung mit der Copy-on-Write Strategie beleuchtet.
 
-Copy-on-Write ist eine Optimierungsstrategie, die dazu dient unnötiges Kopieren zu vermeiden und somit die für Bereitstellung einer geklonten virtuellen Maschine benötigte Zeit zu minimieren.
-\begin{comment}Zusätzlich werden die Systemressourcen (Storage, IO, CPU) des physikalischen Virtualisierungsservers geschont.\end{comment} 
-Copy-on-Write Images für Desktopvirtualisierung nutzen diese Strategie. Hierbei wird nicht für jeden Benutzer ein eigenes Image kopiert, sondern alle Benutzer verwenden ein Master-Image. Falls ein Benutzer Änderungen an diesem Master-Image vornimmt, werden die Änderungen separat abgespeichert. 
+Copy-on-Write ist eine Optimierungsstrategie, die dazu dient unnötiges Kopieren zu vermeiden. Diese Strategie wird vom Linux-Kernel genutzt um Arbeitsspeicher einzusparen. Aber auch bei der Desktopvirtualisierung wird Copy-on-Write eingesetzt, um die benötigte Zeit für die Bereitstellung einer geklonten virtuellen Maschine minimieren.
+\begin{comment}Zusätzlich werden die Systemressourcen (Storage, IO, CPU) des physikalischen Virtualisierungsservers geschont.\end{comment}
+Hierbei wird nicht für jeden Benutzer ein eigenes Image kopiert, sondern alle Benutzer verwenden ein Master-Image. Falls ein Benutzer Änderungen an diesem Master-Image vornimmt, werden die Änderungen separat abgespeichert. 
 
 \section{Zieldefinition}
-Ziel dieser Arbeit soll es sein, Möglichkeiten zur effizienten Speicherung von virtuellen Festplatten aufzuzeigen. Da Hersteller proprietärer Software das Veröffentlichen von Performance-Tests zum Teil nicht ohne Einschränkungen genehmigen, wird hierbei ausschließlich auf bestehende \gls{oss} Lösungen zurückgegriffen. Die freien Open Source Lösungen werden miteinander verglichen und eine effiziente Lösung herausgearbeitet. Außerdem wird betrachtet, wie die für das Copy-on-Write benötigten Master-Images im Netzwerk effizient verteilt werden können.  \cite{vmware}
+Ziel dieser Arbeit ist es, Möglichkeiten zur effizienten Speicherung von virtuellen Festplatten aufzuzeigen. Hierbei wird ausschließlich auf bestehende \gls{oss} Lösungen zurückgegriffen (siehe \ref{opensource}). Die freien Open Source Lösungen werden miteinander verglichen und eine effiziente Lösung herausgearbeitet. Außerdem wird betrachtet, wie die für das Copy-on-Write benötigten Master-Images im Netzwerk effizient verteilt werden können.  \cite{vmware}
 
 \section{Vorgehen und Kurzzusammenfassung} 
-
 Zunächst werden die vorhandenen Softwarelösungen für Copy-on-Write und für die Verteilung der Master-Images erläutert. Danach werden diese anhand verschiedener anwendungsrelevanter Kriterien miteinander verglichen. Nachdem die besten Lösungen beider Kategorien gefunden wurden, werden Softwaretools erstellt, die die Nutzung der gefundenen Lösung ohne tiefgreifende Vorkenntnisse ermöglicht.
 
+\section{Anmerkung zur Verwendung von Open-Source}\label{opensource}
+Für die Verwendung von Open-Source gibt es mehrere Gründe. Zum einen setzen führende Hersteller von Virtualisierungssoftware wie zum Beispiel Citrix aktuell auf Open-Source-Lösungen. Somit können in dieser Arbeit die neuesten Entwicklungen aufgezeigt werden. Zum anderen ist der Einsatz von proprietärer Software im finanziellen Rahmen dieser Arbeit nicht möglich. Der letzte wichtige Grund sind Lizenzprobleme bei proprietärer Software. Sie unterbinden zum Beispiel das Veröffentlichen von Performance-Tests oder die Distribution mit selbst erstellter Software. 
+
 \section{Anmerkung zu den verwendeten Literaturquellen}
-Diese Arbeit enthält neben den herkömmlichen Literaturquellen auch Mailinglisten- und Forenbeiträge, sowie Blogeinträge.
+Diese Arbeit bezieht sich neben den herkömmlichen Literaturquellen auch auf Mailinglisten- und Forenbeiträge, sowie Blogeinträge.
 
 Bei Quellenangaben im Bereich der \gls{oss} Software gibt es einige Punkte die zu beachten sind. Es gibt keine einheitliche Dokumentation der Software. Häufig sind die Informationen nicht an einer zentralen Stelle vereint, sondern liegen verstreut im Internet in Foren, Blogs, Mailinglisten oder auch in Manpages und den Quelltexten selbst. Die Relevanz und die Richtigkeit einer solcher Quellen ist schwer zu bewerten, da Blogs, Mailinglisten und Foren keinen Beschränkungen unterliegen. \begin{comment} Das heißt, jeder der Willens ist zu einem Thema etwas zu schreiben, kann dies auch tun. \end{comment} 
 
 Die oben genannte Verstreuung birgt, neben der schwierigen Bewertbarkeit der Richtigkeit und Relevanz, ein weiteres Problem. Da sehr viele Autoren zum einem Thema etwas schreiben, werden unterschiedliche Begriffe synonym verwendet oder sind mehrdeutig.
 
-Alle Quellen werden mit der zu Grunde liegenden Erfahrung des Autors dieser Arbeit ausgewählt und überprüft, können aber aus den oben genannten Gründen keine absolute Richtigkeit für sich beanspruchen.
+Alle Quellen sind mit der zu Grunde liegenden Erfahrung des Autors dieser Arbeit ausgewählt und überprüft, können aber aus den oben genannten Gründen keine absolute Richtigkeit für sich beanspruchen.
