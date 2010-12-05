@@ -1,7 +1,7 @@
 \chapter{Analyse Verteilung von Images}
 Der Copy-on-Write-Mechanismus benötigt immer eine Vorlage - das Masterimage. Um es auf mehreren Virtualisierungsservern nutzen zu können, muss es über das Netzwerk verteilt werden. Dieses Kapitel soll Wege aufzeigen diese Verteilung möglichst effizient vorzunehmen.
 
-Die Verteilungslösungen werden darauf überprüft wie sie kurzfristige und langfristige Netzwerkausfälle handhaben. Ein anderer Punkt für die Entscheidungsfindung ist die Geschwindigkeit der Übertragung. Außerdem wird einbezogen wie skalierbar die Lösungen sind.
+Die Verteilungslösungen werden darauf überprüft, wie störanfällig sie sind. Ein anderer Punkt für die Entscheidungsfindung ist die benötigte Dauer der Verteilung. Außerdem wird einbezogen wie skalierbar die Lösungen sind.
 
 \section{Multicast}
 Multicast ist eine Mehrpunktverbindung. Der Sender schickt die Daten gleichzeitig an mehrere Empfänger. Durch das einmalige Senden an mehrere Empfänger wird Bandbreite eingespart. Die Daten werden nur an Rechner im Netz versendet diese auch angefordert haben, wie in Abbildung \ref{pic:multicast} schematisch dargestellt. Die Ausnahme bilden Switches die Multicasting nicht unterstützen, sie versenden die gesendeten Daten an alle damit verbundenen Netzwerkknoten. 
@@ -58,6 +58,36 @@ NFS (Network File System) ist ein Protokoll für das Bereitstellen von Daten üb
  \item schlechte Lastenverteilung
 \end{itemize}
 
+\section{Vergleich}
+Im Folgenden sollen die Verteilungsalternativen in Hinsicht auf die Kriterien Skalierbarkeit, Netzwerkausfall und Geschwindigkeit untersucht werden.
+
+\subsection{Skalierbarkeit}
+Eine gute Skalierbarkeit zeichnet sich dadurch aus, dass das Masterimages an einen weiteren Virtualisierungsserver verteilt wird und der Aufwand dadurch nicht signifikant ansteigt oder sich verlangsamt. NFS zeigt dabei eine Schwäche, die Last steigt des NFS-Servers stetig mit jedem neuen NFS-Client an. 
+
+Der Aufwand der Verteilung per Multicast steigt bei einem zusätzlichem Empfänger nicht an. Jedoch wird die Übertragung erheblich langsamer, wenn der zusätzliche Empfänger eine langsame Verbindung zu dem Server hat. 
+
+Der dezentrale Aufbau des BitTorrent-Netzes macht es sehr skalierbar. Jeder zusätzliche Empfänger des Masterimages, wird auch gleichzeitig zu einem Sender. Wenn der Upload und der Download gleich hoch sind, wird das Netz theoretisch also nicht langsamer. Das BitTorrent-Netz profitiert sogar von zusätzlichen Peers, da sie die Störanfälligkeit des Netzes verringern.
+
+\subsection{Störanfälligkeit}
+Hier wird verglichen wie sich der Ausfall eines Netzwerkknotens auf die Verteilung auswirken. BitTorrent ist besonders unanfällig auf Ausfälle im Netz. Dieses wird durch die dezentrale Struktur ermöglicht. Wenn ein einzelner Netzwerkknoten ausfällt, besteht trotzdem unter den noch verfügbaren Knoten ein Netz. 
+\bild{bittorrent_ausfall}{Bittorrent Netzwerkausfall}{pic:bittorrent_ausfall}{400px}
+
+NFS und Multicast haben gegenüber BitTorrent einen wunden Punkt, da die Verteilung über einen einzigen Knoten stattfindet. Der Ausfall eines bestimmten Knotens führt also zum kompletten Abbruch der Verteilung. Man nennt diesen Punkt \textit{Single Point of Failure}. 
+\bild{multicast_ausfall}{Multicast Netzwerkausfall}{pic:multicast_ausfall}{400px}
+
+Bei NFS gibt es beim Bereitstellen der Masterimages zusätzlich die Problematik, dass der Festplattenzugriff der virtuellen Maschinen von der Verfügbarkeit des NFS-Servers abhängt. Ein Ausfall führt damit zu dem Abstürzen der virtuellen Maschinen.
+
+\bild{nfs_ausfall}{NFS Netzwerkausfall}{pic:nfs_ausfall}{400px}
+
+\subsection{Verteilungsdauer}
+Besonders hervorzuheben ist NFS, da es nicht wie BitTorrent und Multicast die Masterimages verteilt sondern bereitstellt. Dadurch benötigt es keine Zeit die Masterimages zu verteilen und kann sie direkt zur Verfügung stellen. 
+
+Die Dauer der Übertragung ist bei Multicast vom langsamsten beteiligten Netzwerkknoten abhängig. Ideal ist es, wenn alle Empfänger und der Sender über die gleiche Download- und Upload-Bandbreite verfügen (homogene Umgebung). So kann die gleichzeitige Übertragung an alle Empfänger optimal ausgenutzt werden.
+
+BitTorrent zeichnet sich vor allem durch aus, dass es auch gute Ergebnisse erzielt, wenn die Peers über unterschiedliche Download- und Upload-Geschwindigkeiten verfügen. In einer homogenen Umgebung benötigt es mehr Zeit für die Verteilung als Multicast. 
+
 \section{Fazit}
 
-Alle aufgezeigten Lösungen für das Verteilen von Masterimages haben ihre Vor- und Nachteile. Wie die Tests gezeigt haben sind alle 3 für den produktiven Einsatz geeignet. Jedoch zeigt sich das BitTorrent wesentliche Vorteile gegenüber den anderen beiden Lösungen hat. Es lässt sich im Gegensatz zu Multicast auch in heterogenen Umgebungen einsetzen und ist sehr viel skalierbarer als NFS.
+Alle aufgezeigten Lösungen für das Verteilen von Masterimages haben ihre Vor- und Nachteile. 
+\begin{comment} Wie der Vergleich zeigt sind alle 3 für den produktiven Einsatz geeignet.\end{comment}
+Jedoch zeigt sich, dass BitTorrent wesentliche Vorteile gegenüber den anderen beiden Lösungen hat. Eine geringe Störanfälligkeit ist im produktiven Einsatz sehr wichtig. Auf diesem Gebiet liegt BitTorrent weit vor NFS und Multicast. Auch die Erweiterbarkeit um zusätzliche Virtualisierungsserver unterstützt die Schlussfolgerung, dass BitTorrent die effizienteste Lösung ist.
