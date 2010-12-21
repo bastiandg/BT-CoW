@@ -1,3 +1,20 @@
 \chapter{Synthese}
 \section{Konzept}
+\subsection{Steuerung und Kommunikation}
+Um in einem Netz mit mehreren Virtualisierungsservern Masterimages zu teilen und zu klonen, bedarf es einer Kommunikation zwischen den Rechnern. Diese Kommunikation sollte von einem zentralen Virtualisierungsserver gesteuert werden.
+
+Um die Steuerung der Virtualisierungsserver zu vereinfachen und zu vereinheitlichen wird in dieser Arbeit die Virtualisierungs-API libvirt verwendet. Die Virtualisierungstechniken Xen und KVM können beide mit libvirt verwaltet werden. Die Fähigkeiten von libvirt umfassen zum Beispiel das Erstellen, Starten, Stoppen, Pausieren sowie die Migration von virtuellen Maschinen. Alle virtuellen Maschinen liegen libvirt als XML-Beschreibungen vor. Sie enthalten Informationen zur virtuellen Hardware und eine eindeutige Identifikationsnummer. Zusätzlich bietet es die Möglichkeit über das Netzwerk angesprochen zu werden.
+
+Die Steuerung/Kommunikationsaufgaben die die Virtualisierungstechniken nicht direkt betreffen, werden über das Netzwerkprotokoll ssh getätigt. Dazu gehört das Initiieren des Verteilens der Masterimages und das Klonen der virtuellen Festplatten.
+
+\subsection{Verteilung}
+Die Verteilung der Masterimages findet über das BitTorrent-Protokoll statt (siehe Kapitel \ref{verteilung}). Um die Verteilung über ssh zu verwalten, wird ein BitTorrent-Client benötigt, der sich über Kommandozeile bedienen lässt. Eine weitere Vorraussetzung ist die Unterstützung des Protokolls DHT. Für diesen Zweck kommt in dieser Arbeit \textit{deluge} als BitTorrent-Client zum Einsatz. Er kann komplett über die Kommandozeile gesteuert werden und hat die Möglichkeit per DHT andere Peers zu finden.
+
+Zum Starten der Verteilung der Masterimages wird zunächst eine .torrent-Datei erstellt und an alle Virtualisierungsserver gesendet, die es erhalten sollen. Danach wird der BitTorrent-Client gestartet und der Download initiiert.
+
+Nicht jeder Virtualisierungsserver kann das Verteilen initiieren, sondern nur das Verwaltungsprogramm auf dem zentralen Server. Dies gewährleistet, dass nicht jeder Virtualisierungsserver auf jeden anderen zugreifen kann.
+
+\subsection{Klonen}
+Das Klonen wird wie auch die Verteilung von einem zentralen Sever verwaltet. Für das eigentliche Klonen der virtuellen Festplatten werden die in den Virtualisierungstechniken integrierten Programme eingesetzt. Auf einem Xen-Server ist es das Tool \textit{vhd-util}, bei KVM \textit{kvm-img}. Nach dem Klonen der virtuellen Festplatten muss in libvirt eine neue virtuelle Machine definiert werden. Dabei dient die Beschreibung der vervielfältigte VM als Vorlage.
+
 \section{Realisierung einer Komplettlösung} 

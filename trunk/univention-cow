@@ -1,0 +1,226 @@
+#!/usr/bin/python2.4
+# -*- coding: utf-8 -*-
+#
+#  creates Copy on Write VMs from existing VMs
+#
+# Copyright 2010 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+from optparse import OptionParser
+import string, random, os, re, time, sys
+import subprocess
+import glob
+from xml.dom.minidom import parseString
+
+def loopContains(image):
+	"""Test wheter a hard disk image is already mounted as loopback."""
+	p = subprocess.Popen(["losetup", "-a"], shell=False, stdout=subprocess.PIPE)
+	stdout, stderr = p.communicate()
+	lines = stdout.splitlines()
+	for i in lines:
+		if i.find(image) > -1 :
+			loop = re.search("/dev/loop[0-9]*",i).group(0)
+			return loop
+
+def generateComputerName(prefix):
+	"""Generate random computer name."""
+	computerName = "%s-" % prefix
+	length = 10
+	chars = string.letters+string.digits
+
+	while len(computerName) < length:
+		computerName += random.choice(chars)
+
+	return computerName
+
+def create(options):
+	"""Create a copy on write VM and define it in libvirt."""
+	if not options.source:
+		parser.error("Source-VM is required")
+	
+	p = subprocess.Popen(["virsh", "dumpxml", options.source], shell=False, stdout=subprocess.PIPE)
+	stdout, stderr = p.communicate()
+	
+	description = parseString(stdout)
+	computerName = generateComputerName(options.prefix)
+	description.getElementsByTagName("uuid")[0].childNodes[0].data = ""
+	description.getElementsByTagName("name")[0].childNodes[0].data = computerName
+	removeTag = description.getElementsByTagName("mac")[0]
+	removeTag.parentNode.removeChild(removeTag)
+	removeTag = description.getElementsByTagName("uuid")[0]
+	removeTag.parentNode.removeChild(removeTag)
+	
+	if not os.path.exists("/var/lib/libvirt/cow/"):
+		os.mkdir("/var/lib/libvirt/cow/")
+	path = "/var/lib/libvirt/cow/%s/" % computerName
+	os.mkdir(path)
+	
+	#create a copy-on-write-image for each masterimage
+	hardDisks = description.getElementsByTagName("disk")
+	for i in range(0,len(hardDisks)):
+		if hardDisks[i].getAttribute("device") == "disk":
+			hardDisk = hardDisks[i].getElementsByTagName("source")[0].getAttribute("file")
+			if not os.path.isfile(hardDisk):
+				print "Skipping %s because it is no hard disk image" % hardDisk
+			else:
+				if description.getElementsByTagName("domain")[0].getAttribute("type") == "xen":
+					hardDisks[i].getElementsByTagName("driver")[0].setAttribute("name", "phy")
+				hardDisk = os.path.abspath(hardDisk)
+				masterImageName = re.search("[^/]*$",hardDisk).group(0)
+				cowImageName = "diff-%s" % masterImageName
+				cowImageSize = int(os.path.getsize(hardDisk)*1.01)
+				cowName = "%scow%s" % (computerName, str(i))
+				wipe = open("/dev/null","w")
+				p = subprocess.Popen(["dd", "if=/dev/zero", "of=%s%s" % (path, cowImageName),
+							"bs=1", "seek=%i" % cowImageSize , "count=0"],
+							shell=False, stdout=wipe, stderr=wipe )
+				p.wait()
+				wipe.close()
+				time.sleep(0.5)
+				os.symlink(hardDisk, "%smaster%s" % (path, str(i)))
+				os.symlink("%s%s" % (path, cowImageName), "%scow%s" % (path, str(i)))
+				os.symlink("/dev/mapper/%s" % cowName, "%s%s" % (path, cowName))
+				hardDisks[i].getElementsByTagName("source")[0].setAttribute("file", "/dev/mapper/%s" % cowName)
+	tempDescription = "/tmp/%s.xml" % computerName
+	f = open(tempDescription, 'w')
+	description.writexml(f)
+	f.close()
+	wipe = open("/dev/null","w")
+	p = subprocess.Popen(["virsh", "define",tempDescription], shell=False, stdout=wipe, stderr=wipe )
+	p.wait()
+	os.remove(tempDescription)
+	print "Ihre Copy-on-Write-VM heißt \"%s\"" % computerName
+
+def start(options):
+	"""Start the copy on write VM."""
+	setup(options)
+	p = subprocess.Popen(["virsh", "start", "%s" % options.name],
+				shell=False)
+	p.wait()
+
+def setup(options):
+	"""Set up the copy on write images."""
+	if not options.name:
+		print "VM-Name required"
+		sys.exit(1)
+	
+	devs = glob.glob("/var/lib/libvirt/cow/%s/%scow[0-9]*" % (options.name,options.name))
+	for i in devs:
+		cowName = re.search("[^ /]*$",i).group(0)
+		cowNumber = re.search("[0-9]*$",i).group(0)
+		imagePath = re.sub("[^ /]*$","",i)
+
+		masterImage = os.path.realpath("%smaster%s" % (imagePath,cowNumber))
+		diffImage = os.path.realpath("%scow%s" % (imagePath,cowNumber))
+		cowImage = os.path.realpath(i)
+
+		if not os.path.exists("/dev/mapper/%s" % cowName):
+
+			masterloop = loopContains(masterImage)
+			if not masterloop:
+				p = subprocess.Popen(["losetup", "-fs", masterImage], shell=False, stdout=subprocess.PIPE)
+				stdout, stderr = p.communicate()
+				lines = stdout.splitlines()
+				masterloop = lines[0]
+
+			diffloop = loopContains(diffImage)
+			if not diffloop:
+				p = subprocess.Popen(["losetup", "-fs", diffImage], shell=False, stdout=subprocess.PIPE)
+				stdout, stderr = p.communicate()
+				lines = stdout.splitlines()
+				diffloop = lines[0]
+
+			p = subprocess.Popen(["blockdev", "--getsize", masterloop], shell=False, stdout=subprocess.PIPE)
+			stdout, stderr = p.communicate()
+			lines = stdout.splitlines()
+			cowSize = lines[0]
+			chunkSize=64
+
+			#Setup COW-Image
+			stdin = "0 %s snapshot %s %s p %d" % (cowSize, masterloop, diffloop, chunkSize)
+			p = subprocess.Popen(["dmsetup", "create", cowName], stdin=subprocess.PIPE)
+			p.communicate(stdin)
+
+			while not os.path.exists("/dev/mapper/%s" % cowName):
+				time.sleep(0.01)
+
+def remove(options):
+	"""Remove the copy on write images."""
+	if not options.name:
+		print "VM-Name required"
+		sys.exit(1)
+
+        devs = glob.glob("/var/lib/libvirt/cow/%s/%scow[0-9]*" % (options.name,options.name))
+        for i in devs:
+		if os.path.exists(i):
+			cowName = re.search("[^ /]*$",i).group(0)
+			p = subprocess.Popen(["dmsetup", "deps", cowName], stdout=subprocess.PIPE, shell=False)
+			stdout, stderr = p.communicate()
+			lines = stdout.splitlines()
+			n = lines[0]
+			loopNumber = re.search("[0-9]*\)$",n).group(0).replace(")","")
+
+			p = subprocess.Popen(["dmsetup", "remove", cowName], shell=False)
+			p.wait()
+			p = subprocess.Popen(["losetup", "-d", "/dev/loop%s" % loopNumber], shell=False)
+			p.wait()
+
+parser = OptionParser( usage="usage: %prog (setup|remove|start|create) [options]" )
+parser.add_option('-p', '--prefix',
+			action='store', dest='prefix', default="VM",
+			help='Increase debug level')
+parser.add_option('-n', '--name',
+			action='store', dest='name', default=None,
+			help='Name of the VM')
+parser.add_option('-s', '--source',
+			action='store', dest='source', default=None,
+			help='Name of the source VM')
+
+(options, arguments) = parser.parse_args()
+
+if len(sys.argv)<2:
+	print parser.print_help()
+	sys.exit(2)
+
+elif sys.argv[1] == "setup":
+	setup(options)
+
+elif sys.argv[1] == "remove":
+	remove(options)
+
+elif sys.argv[1] == "create":
+	create(options)
+
+elif sys.argv[1] == "start":
+	start(options)
+
+else:
+	print "wrong command, use setup or remove"
+	print parser.print_help()
+	sys.exit(2)
+
+sys.exit(0)
