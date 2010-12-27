@@ -11,9 +11,10 @@ import socket
 from xml.dom.minidom import parseString
 
 vHostType = {1: "KVM", 2: "XEN"}
-debug=1
+debug = 1
+downloadDir = "/var/lib/download"
+imageDir = "/var/lib/libvirt/images"
 def hostList():
-	#TODO filter DOM0
 	hostList = []
 	hosts = open(os.path.expanduser("~/.cow/vhosts"), "r").readlines()
 	for i in range(0,len(hosts)):
@@ -34,7 +35,7 @@ def vmList(hostName):
 
 def vmOffList(hostName, vType):
 	vOffList = []
-	if vType == "XEN":
+	if vType == "xen":
 		conn = libvirt.open('xen://' + hostName + '/')
 	else:
 		conn = libvirt.open('qemu://' + hostName + '/system')
@@ -45,8 +46,9 @@ def vmOffList(hostName, vType):
 	return vOffList
 
 def vmOnList(hostName, vType):
+	#TODO filter DOM0
 	vOnList = []
-	if vType == "XEN":
+	if vType == "xen":
 		conn = libvirt.open('xen://' + hostName + '/')
 	else:
 		conn = libvirt.open('qemu://' + hostName + '/system')
@@ -85,7 +87,7 @@ def newVServer():
 		vhosts = open(os.path.expanduser("~/.cow/vhosts"), "a")
 		vhosts.write("\n" + hostname + "\t" + vHostType[choice])
 		vhosts.close()
-		
+		#virsh net-autostart default
 		command = ["./libvirtprep.sh", hostname]
 		execute(command)
 
@@ -101,7 +103,7 @@ def newVServer():
 		command = ["./clientcert.sh", hostname]
 		execute(command)
 		
-		command = ["./remoteinstall.sh", hostname, "rsync deluged deluge-console mktorrent libvirt-bin" ]
+		command = ["./remoteinstall.sh", hostname, "rsync deluged deluge-console mktorrent libvirt-bin python-libvirt dnsmasq-base" ]
 		execute(command)
 
 def shareImage():
@@ -181,7 +183,13 @@ def test():
 		for i in range(0,len(vOffList)):
 			print str(i) + "\t" + vOffList[i].name() + "\t" + str(vOffList[i].info()[0])
 		vmId = raw_input("ID: ")
-		hdList = hddList(vOffList[int(vmId)].XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+		vm = vOffList[int(vmId)]
+		#makeTorrent(hostName, vm)
+		command = ['ssh', 'root@' + hostName, '/opt/cow/maketorrent.py ' + vm.name()]
+		execute(command)
+		command = ['rsync', 'root@' + hostName + ':' + downloadDir + "/" + vm.name() + '.torrent', '/tmp/' ]
+		execute(command)
+
 		print "Verteilen an Hosts:"
 		for host in hList:
 			if host[2] == hList[int(hostId)][2]:
@@ -189,13 +197,37 @@ def test():
 		targetHostIds = raw_input("IDs (z.B 0,2,3): ")
 		targetHostIds = targetHostIds.replace("\t", "").replace(" ", "").split(",")
 		targetHosts = []
+		command = ['ssh', 'root@' + hostName, 'deluged']
+		print command
+		s = subprocess.Popen(command)
+		#execute(command)
+		
+		command = ['ssh', 'root@' + hostName, 'deluge-console "add ' + downloadDir + "/" + vm.name() + '.torrent"']
+		print command
+		s2 = subprocess.Popen(command)
+		#execute(command)
+
 		#TODO Abfrage der korrekten Virtualisierungstechnik
 		for i in targetHostIds:
 			if hList[int(i)][1] != hostName:
 				targetHosts.append(hList[int(i)])
-		share(hostName, hdList[0], targetHosts)
+
 	else:
-		print "keine VM vorhanden"
+		print "keine VM vorhanden"""
+
+def makeTorrent(hostName, vm):
+	print vm.name()
+	torrentDir = downloadDir + '/' + vm.name()
+	#make torrent directory and empty it
+	command = ['ssh', 'root@' + hostName, 'mkdir -p "' + torrentDir  + '" && rm -rf "' + torrentDir + '/*"']
+	execute(command)
+	
+	hdList = hddList(vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+	for hd in hdList:
+		command = ['ssh', 'root@' + hostName, 'ln -s "' + hd  + '" "' + torrentDir + '/' + os.path.basename(hd) + '"']
+		execute(command)
+		print hd
+		
 
 def share(host,image,targetHosts):
 	ip = socket.gethostbyname(host)
@@ -210,7 +242,7 @@ def share(host,image,targetHosts):
 	execute(command)
 
 	for targetHost in targetHosts:
-		command = ['ssh', 'root@' + targetHost[1], 'rsync ' + host + ':' + torrentDest + ' /var/lib/download/']
+		command = ['ssh', 'root@' + targetHost[1], 'rsync ' + host + ':' + torrentDest + " " + downloadDir + '/']
 		execute(command)
 		command = ['ssh', 'root@' + targetHost[1],
 				'deluge-console "add ' + torrentDest + '"' ]
