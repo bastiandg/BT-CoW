@@ -59,8 +59,12 @@ def cloneVm(vmName, vType):
 	vm = conn.lookupByName(vmName)
 
 	#xmlFile = open(torrentDir + '/' + vmName + '.xml', 'w')
-	xmlFile = open('test.xml', 'w')
-	prepareXml(vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)).writexml(xmlFile)
+	xmlFile = open('/tmp/' + vmName + '.xml', 'w')
+	newVmXml = prepareXml(vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+	#save a temp copy, perhaps for debugging :)
+	newVmXml.writexml(xmlFile)
+	#define the new VM in libvirt
+	conn.defineXML(newVmXml.toxml())
 	xmlFile.close()
 
 def cloneHdd(hdd, newHddPath):

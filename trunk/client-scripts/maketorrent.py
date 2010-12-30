@@ -69,6 +69,8 @@ def makeTorrent(vmName):
 	prepareXml(vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE), vmName).writexml(xmlFile)
 	xmlFile.close()
 	torrentFileName = config.downloadDir + "/" + vmName + '.torrent'
+	if os.path.exists(torrentFileName):
+		os.remove(torrentFileName)
 	command = ['mktorrent', '-a', config.ip, '-o' , torrentFileName, torrentDir]
 	execute(command)
 	#add the announce server as a dht node
@@ -80,7 +82,8 @@ def makeTorrent(vmName):
 	torrentFile.write(addedDht)
 	torrentFile.close()
 
-
+if not os.path.exists(os.path.expanduser('~/.config/')):
+	os.mkdir('~/.config/')
 configPickle = open(os.path.expanduser('~/.config/whoami.pickle'), 'r')
 config = pickle.load(configPickle)
 configPickle.close()

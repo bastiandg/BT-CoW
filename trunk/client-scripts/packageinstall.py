@@ -14,6 +14,6 @@ def execute(command):
 
 packages = re.split('[\s]+', sys.argv[1])
 
-command = ['apt-get', 'install'] + packages
+command = ['apt-get', 'install', '-y'] + packages
 execute(command)
 
