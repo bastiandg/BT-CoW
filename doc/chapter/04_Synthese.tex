@@ -1,7 +1,7 @@
 \chapter{Synthese}
 \section{Konzept}
 \subsection{Steuerung und Kommunikation}
-Um in einem Netz mit mehreren Virtualisierungsservern Masterimages zu teilen und zu klonen, bedarf es einer Kommunikation zwischen den Rechnern. Diese Kommunikation sollte von einem zentralen Server gesteuert werden. Dieser Server kann selbst ein Virtualisierungsserver sein oder nur mit der Verwaltung beschäftigt sein.
+Um in einem Netz mit mehreren Virtualisierungsservern Masterimages zu teilen und zu klonen, bedarf es einer Kommunikation zwischen den Rechnern. Diese Kommunikation sollte von einem zentralen Server gesteuert werden. Dieser Verwaltungsserver kann selbst ein Virtualisierungsserver sein oder nur mit der Verwaltung beschäftigt sein.
 
 Die Virtualisierungstechniken sollen über eine einheitliche Schnittstelle verwaltet werden. Durch die einheitliche Schnittstelle soll die Verwaltung vereinfacht und zusätzlicher Aufwand vermieden werden. Auch die Möglichkeit bei einer Weiterentwicklung des Programms neue Virtualisierungstechniken zu integrieren soll gegeben sein.
 
@@ -13,24 +13,139 @@ Zum Starten der Verteilung der Masterimages wird zunächst eine .torrent-Datei e
 Nicht jeder Virtualisierungsserver kann das Verteilen initiieren, sondern nur das Verwaltungsprogramm des Verwaltungsservers. Dies gewährleistet, dass nicht jeder Virtualisierungsserver auf jeden anderen zugreifen kann.
 
 \subsection{Klonen}
-Das Klonen wird, wie auch die Verteilung, von dem zentralen Verwaltungssever verwaltet. Für das eigentliche Klonen der virtuellen Festplatten werden die in den Virtualisierungstechniken integrierten Programme eingesetzt. 
+Das Klonen wird, wie auch die Verteilung, von dem zentralen Verwaltungsserver verwaltet. Für das eigentliche Klonen der virtuellen Festplatten werden die in den Virtualisierungstechniken integrierten Programme eingesetzt. 
 
 \section{Realisierung einer Komplettlösung}
-\subsection{Programmierumgebung}
-In der Programmierung wird die Skriptsprache Python eingesetzt. Da die hier entwickelte Verwaltungslösung nicht zeitkritisch ist, hat die Performanz keine hohe Priorität. Viel wichtiger ist es den Wartungsaufwand niedrig zu halten. Mit diesen Bedingungen ist die Skriptsprache Python eine sehr gute Wahl.
+\subsection{Rahmenbedingungen}
+Die Komplettlösung wird auf einem Debian squeeze System implementiert. In der Komplettlösung werden ein paar wenige debianspezifische Befehle wie zum Beispiel \textit{apt-get} verwendet. Diese können aber leicht für andere Linux-Distributionen portiert werden. Neben den oben genannten Lösungen kommen ssh und rsync zum Einsatz.
+
+Für die Programmierung wird die Skriptsprache Python eingesetzt. Da die hier entwickelte Verwaltungslösung nicht zeitkritisch ist, hat die Performanz keine hohe Priorität. Viel wichtiger ist es den Wartungsaufwand niedrig zu halten. Mit diesen Bedingungen ist die Skriptsprache Python eine sehr gute Wahl.
+
+\subsection{Programmierstil?}
 
 \subsection{Steuerung und Kommunikation}
 Um die Steuerung der Virtualisierungsserver zu vereinfachen und zu vereinheitlichen wird in dieser Arbeit die Virtualisierungs-API libvirt verwendet. Die Virtualisierungstechniken Xen und KVM können beide mit libvirt verwaltet werden. Die Fähigkeiten von libvirt umfassen zum Beispiel das Erstellen, Starten, Stoppen, Pausieren sowie die Migration von virtuellen Maschinen. 
 
-Alle virtuellen Maschinen liegen libvirt als XML-Beschreibungen vor. Sie enthalten Informationen zu der virtuellen Hardware und eine eindeutige Identifikationsnummer. 
+Alle virtuellen Maschinen liegen libvirt als XML-Beschreibungen vor. Sie enthalten Informationen zu der virtuellen Hardware und eine eindeutige Identifikationsnummer. Eine solche XML-Beschreibung ist beispielhaft im Folgenden zu dargestellt.
+\\
+\begin{lstlisting}[caption=libvirt-XML Beispiel,language=XML,label=libvirtxml]{libvirtxml}
+<domain type='kvm'>
+  <name>debian</name>
+  <memory>512000</memory>
+  <currentMemory>512000</currentMemory>
+  <vcpu>1</vcpu>
+  <os>
+    <type>hvm</type>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+  </features>
+  <clock offset='utc'/>
+  <on_poweroff>destroy</on_poweroff>
+  <on_crash>destroy</on_crash>
+  <devices>
+    <emulator>/usr/bin/kvm</emulator>
+    <disk type='file' device='disk'>
+     <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/debian.qcow2'/>
+      <target dev='hda'/>
+    </disk>
+    <interface type='network'>
+      <source network='default'/>
+    </interface>
+    <input type='mouse' bus='ps2'/>
+    <graphics type='vnc' port='-1' listen='0.0.0.0'/>
+  </devices>
+</domain>
+\end{lstlisting}
 
-Zusätzlich bietet es die Möglichkeit über das Netzwerk angesprochen zu werden. Außerdem unterstützt libvirt neben Xen und KVM noch andere Virtualisierungstechniken, die bei einer weiteren Entwicklung integriert werden können. %Die Steuerung/Kommunikationsaufgaben die die Virtualisierungstechniken nicht direkt betreffen, werden über das Netzwerkprotokoll ssh getätigt. Dazu gehört das Initiieren des Verteilens der Masterimages und das Klonen der virtuellen Festplatten.
+Libvirt bietet die Möglichkeit über das Netzwerk angesprochen zu werden. Außerdem unterstützt libvirt neben Xen und KVM noch andere Virtualisierungstechniken, die bei einer weiteren Entwicklung in die Komplettlösung integriert werden können.%Die Steuerung/Kommunikationsaufgaben die die Virtualisierungstechniken nicht direkt betreffen, werden über das Netzwerkprotokoll ssh getätigt. Dazu gehört das Initiieren des Verteilens der Masterimages und das Klonen der virtuellen Festplatten.
 
-Die einzelnen Aufgaben wie das Verteilen und das Klonen werden von lokal installierten Skripten erledigt. Sie werden über das Netzwerkprotokoll ssh gestartet.
+Die einzelnen Aufgaben wie das Verteilen und das Klonen werden auf den Virtualisierungsservern von lokal installierten Skripten erledigt. So kann vermieden werden, dass unnötig viele Befehle über das Netzwerk gesendet werden müssen. Die Skripte werden über das Netzwerkprotokoll ssh gestartet.
 
 \bild{Kommunikation}{Kommunikation}{pic:kommunikation}{400px}
 
+\subsection{Einrichtung eines Virtualisierungshosts}\label{einrichtung}
+Die Einrichtung wird durchgeführt um alle verwalteten Virtualisierungshosts auf einen einheitlichen Stand zu bringen. Während der Einrichtung wird die nötige Software installiert und es werden Einstellungen vorgenommen. Sie ermöglichen das ???reibungslose??? Kopieren und Klonen von virtuellen Maschinen. Der Ablauf der Einrichtung wird im Folgenden dargelegt. 
+
+\textbf{Ablauf}
+
+Der Benutzer gibt zunächst die Hostadresse des Virtualisierungshosts an. Ebenfalls wird die Virtualisierungstechnik des neuen Hosts abgefragt. Nach der Eingabe wird der Rechnername abgefragt ???. Für die einfache Kommunikation wird auf Host der ssh-key des Verwaltungsservers hinzugefügt. 
+
+Um nicht alle Aktionen remote über das Netzwerk ausführen zu müssen, werden die Funktion des Klonens und der Verteilung in Skripte ausgelagert. Diese Skripte werden von dem Verwaltungsserver auf den neuen Host übertragen.
+
+Im Anschluss folgt die Installation der benötigten Software-Pakete. Es werden die Pakete für libvirt, deluge, sowie für administrative Tools installiert. 
+
+Für die Abfrage über das Netzwerk verwendet libvirt Zertifikate. Es gibt drei unterschiedliche Zertifikate. Das Server-Zertifikat dient dazu die Echtheit des Virtualisierungshosts zu validieren. Das Client-Zertifikat wird von dem Server dazu verwendet den Client zu validieren und ihm somit Zugrif zu gewähren. Das CA-Zertifikat wird benötigt um die anderen beiden Zertifikate zu erstellen und zu zertifizieren. Das Server-Zertifikat für den Virtualisierungshost erstellt der Verwaltungsserver und legt ihn danach auf dem neuen Virtualisierungshost ab. (\textbf{Hinweis:} Dies ist nur eine vereinfachte Darstellung des Zertifikate-Systems. Eine ausführliche Beschreibung ist unter \href{http://wiki.libvirt.org/page/TLSSetup}{http://wiki.libvirt.org/page/TLSSetup} zu finden.) 
+
 \subsection{Verteilung}
 Für den Zweck der Verteilung, kommt in dieser Arbeit \textit{deluge} als BitTorrent-Client zum Einsatz. Er kann komplett über die Kommandozeile gesteuert werden und hat die Möglichkeit per DHT andere Peers zu finden.
+
+\textbf{Ablauf}
+
+Zunächst wählt der Benutzer einen Virtualisierungs-Host aus, der die zu verteilende virtuelle Maschine beherbergt. 
+\\
+\begin{lstlisting}[caption=VHost-Auswahl,language=Python,label=chooseVHost]{chooseVHost}
+def chooseVHost():
+	hList = hostList()
+	if hList:
+		print 'Wählen Sie den Virtualisierungshost aus:'
+		print 'ID\tHost\tTyp'
+		for host in hList:
+			print str(host[0]) + '\t' + host[1] + '\t' + host[2]
+		hostId = intInput('ID: ')
+		return [hList[hostId][1], hList[hostId][2]]
+	else:
+		print 'kein Virtualisierungshost vorhanden'
+		return [None,None]
+\end{lstlisting}
+
+Die Methode für die Auswahl lässt den Benutzer zwischen allen ausgeschalteten virtuellen Maschinen auswählen.
+\\
+\begin{lstlisting}[caption=VM-Auswahl,language=Python, label=chooseVm]{chooseVm}
+def chooseVm(hostName,vType):
+	vOffList = vmOffList(hostName,vType)
+	if vOffList:
+		print 'Wählen Sie eine VM aus:'
+		print 'ID\tName\tState'
+		for i in range(0,len(vOffList)):
+			print str(i) + '\t' + vOffList[i].name() + '\t' + str(vOffList[i].info()[0])
+		vmId = intInput('ID: ')
+		return vOffList[vmId]
+\end{lstlisting}
+Außerdem gibt der Benutzer an welche Virtualisierungsserver die virtuelle Maschine verteilt werden soll. Nach der Auswahl der Server und der VM, erstellt das Skript \lstinline|maketorrent.py| (siehe \ref{einrichtung}) eine torrent-Datei aus der XML-Beschreibung von libvirt und den virtuellen Festplatten. Sie wird an alle ausgewählten V-Hosts mit rsync weitergegeben. Nun werden alle BitTorrent-Clients gestartet und die erstellte torrent-Datei hinzugefügt.
+
 \subsection{Klonen}
-Auf einem Xen-Server ist es das Tool \textit{vhd-util}, bei KVM \textit{kvm-img}. Nach dem Klonen der virtuellen Festplatten muss in libvirt eine neue virtuelle Machine definiert werden. Dabei dient die Beschreibung der vervielfältigten virtuellen  Maschine als Vorlage.
+Für das Klonen der virtuellen Maschinen werden die von den Virtualisierungstechniken mitgebrachten Tools verwendet. Auf einem Xen-Server ist es das Tool \textit{vhd-util}, bei KVM \textit{kvm-img}. %Nach dem Klonen der virtuellen Festplatten muss in libvirt eine neue virtuelle Machine definiert werden. Dabei dient die Beschreibung der vervielfältigten virtuellen  Maschine als Vorlage.
+
+\textbf{Ablauf}
+
+Beim Klonen einer virtuellen Maschine wählt der Benutzer, wie bei der Verteilung, einen Virtualisierungs-Host und eine virtuelle Maschine aus (siehe \ref{chooseVm}). Zusätzlich dazu wird die Anzahl der Klone und die Option alle Klone sofort zu starten abgefragt. Nach den erfolgten Benutzereingaben ruft das Programm das auf dem Virtualisierungsserver befindliche Skript \lstinline|clone.py| zum Klonen auf.
+
+Im ersten Schritt des Klonvorgangs generiert das Skript einen neuen Namen. Der Name setzt sich aus dem alten Namen und 6 zufälligen und Buchstaben zusammen. Der nächste Schritt ist es die Beschreibung der Vorlage aus libvirt zu laden. Aus ihr werden die Festplatten der Vorlage ausgelesen und geklont. Die Identifikationsnummer und die MAC-Adresse aus der Beschreibung werden gelöscht und der neue Name eingetragen. Die MAC-Adresse und die Identifikationsnummer generiert libvirt neu beim Anlegen der geklonten VM.
+\\
+\begin{lstlisting}[caption=XML-Bearbeitung,language=Python, label=prepareXml]{prepareXml}
+def prepareXml(xmlDescription):
+	hList = []
+	description = parseString(xmlDescription)
+	hardDisks = description.getElementsByTagName("disk")
+	for i in range(0,len(hardDisks)):
+		if hardDisks[i].getAttribute("device") == "disk":
+			hardDisk = hardDisks[i].getElementsByTagName("source")[0].getAttribute("file")
+			newHddPath = config.imageDir + "/" + newVmName + "-" + os.path.basename(hardDisk)
+			cloneHdd(hardDisk, newHddPath)
+			hardDisks[i].getElementsByTagName("source")[0].setAttribute("file", newHddPath)
+	description.getElementsByTagName("name")[0].childNodes[0].data = newVmName
+	
+	for removeTag in description.getElementsByTagName("mac"):
+		removeTag.parentNode.removeChild(removeTag)
+	
+	for removeTag in description.getElementsByTagName("uuid"):
+		removeTag.parentNode.removeChild(removeTag)
+	return description
+\end{lstlisting}
+\subsection{Fehlerbehandlung}
+Benutzereingabe
+Hostausfall
+Debugging

@@ -9,6 +9,7 @@
 \DeclareGraphicsExtensions{.pdf,.png,.jpg,} %eps wurde nicht getestet, sollte in der neusten texlive Version funktionieren
 \graphicspath{{img/}}
 \usepackage[pdftex, colorlinks=true, linkcolor={black}, urlcolor={black}, citecolor={black}]{hyperref}
+%\usepackage[pdftex, colorlinks=true, citecolor={black}]{hyperref}
 \usepackage[numbers]{natbib}
 \usepackage{verbatim} 
 \usepackage[
@@ -39,7 +40,7 @@ nonumberlist] %keine Seitenzahlen anzeigen
 \definecolor{colString}{rgb}{0,0.5,0}
 \lstset{
   float=hbp,
-  basicstyle=\ttfamily\fontsize{9pt}{10pt}\selectfont,
+  basicstyle=\ttfamily\fontsize{12pt}{12pt}\selectfont,
   identifierstyle=\color{colIdentifier},
   keywordstyle=\color{colKeys},
   stringstyle=\color{colString},
@@ -55,7 +56,13 @@ nonumberlist] %keine Seitenzahlen anzeigen
   breaklines=true,
   backgroundcolor=\color{hintergrund},
   breakautoindent=true,
-  captionpos=b
+  captionpos=b,
+  literate={ö}{{\"o}}1
+           {ä}{{\"a}}1
+           {ü}{{\"u}}1
+           {Ö}{{\"O}}1
+           {Ä}{{\"A}}1
+           {Ü}{{\"U}}1
 }
 
 \renewcommand{\baselinestretch}{1.3}
@@ -112,16 +119,16 @@ nonumberlist] %keine Seitenzahlen anzeigen
 \include{chapter/03_Analyse_Verteilung}
 \include{chapter/04_Synthese}
 \include{chapter/05_Zusammenfassung}
-
+\include{chapter/06_Anhang}
 \newpage
 %Glossar ausgeben
-\printglossary[style=altlist,title=Glossar]
+%\printglossary[style=altlist,title=Glossar]
 
 
 \bibliographystyle{alphadin}
 \bibliography{mybibfile}
 
-\listoftables
+%\listoftables
 \listoffigures
 \lstlistoflistings
 
