@@ -1,4 +1,5 @@
 \documentclass[parskip*,DIV12,BCOR10mm,headsepline,a4paper,12pt]{scrreprt}
+
 %\documentclass[parskip*,DIV12,BCOR10mm,headsepline,twoside,a4paper,12pt]{scrreprt}
 \usepackage{courier}
 \usepackage[utf8x]{inputenc}
@@ -19,7 +20,13 @@ nonumberlist] %keine Seitenzahlen anzeigen
 {glossaries}
 \makeglossaries
 \renewcommand*{\glspostdescription}{}
-
+ \usepackage{geometry}
+ \geometry{a4paper, top=40mm, left=40mm, right=40mm, bottom=40mm, headsep=10mm, footskip=12mm} 
+ %\linespread {1.5}
+ \renewcommand{\baselinestretch}{1.35}
+ %\usepackage[onehalfspacing]{setspace}
+ %\usepackage[onehalfspacing]{setspace}
+ %\doublespacing
 % \usepackage{paralist}
 % \usepackage{amsmath}
 % \usepackage{amsfonts}
@@ -28,8 +35,8 @@ nonumberlist] %keine Seitenzahlen anzeigen
 % \usepackage{algorithm2e}\
 %\usepackage{fancyhdr}
 \usepackage{listings}
-\usepackage{xcolor} 
-\usepackage{color}
+%\usepackage{xcolor} 
+\usepackage[usenames,dvipsnames]{color}
 \usepackage{colortbl}
 \usepackage{float}
 \usepackage[user,titleref]{zref} 
@@ -38,9 +45,11 @@ nonumberlist] %keine Seitenzahlen anzeigen
 \definecolor{colIdentifier}{rgb}{0,0,0}
 \definecolor{colComments}{rgb}{0.3,0.3,0.5}
 \definecolor{colString}{rgb}{0,0.5,0}
+\definecolor{darkgreen}{cmyk}{0.7, 0, 1, 0.5}
+\definecolor{darkblue}{rgb}{0.1, 0.1, 0.5}
 \lstset{
   float=hbp,
-  basicstyle=\ttfamily\fontsize{12pt}{12pt}\selectfont,
+  basicstyle=\ttfamily\fontsize{9pt}{10pt}\selectfont,
   identifierstyle=\color{colIdentifier},
   keywordstyle=\color{colKeys},
   stringstyle=\color{colString},
@@ -64,8 +73,22 @@ nonumberlist] %keine Seitenzahlen anzeigen
            {Ä}{{\"A}}1
            {Ü}{{\"U}}1
 }
+%colored diff-listings
+\lstdefinelanguage{diff}
+{
+keywords={+, -, \ , @@, diff, index, new},
+sensitive=false,
+morecomment=[l][""]{\ },
+morecomment=[l][\color{darkgreen}]{+},
+morecomment=[l][\color{red}]{-},
+morecomment=[l][\color{darkblue}]{@@},
+morecomment=[l][\color{darkblue}]{diff},
+morecomment=[l][\color{darkblue}]{index},
+morecomment=[l][\color{darkblue}]{new},
+morecomment=[l][\color{darkblue}]{similarity},
+morecomment=[l][\color{darkblue}]{rename},
+}
 
-\renewcommand{\baselinestretch}{1.3}
 \newcommand{\bild}[4]       % Dateiname, Beschriftung, Hyperlink-Marke, Breite
 {
      \begin{figure}[htbp]
