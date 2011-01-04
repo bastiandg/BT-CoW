@@ -98,9 +98,6 @@ def cloneHddXen(hdd, newHddPath):
 	command = ['vhd-util', 'snapshot', '-n', newHddPath, '-p', hdd]
 	execute(command)
 
-print len(sys.argv)
-print sys.argv
-
 if len(sys.argv) == 5:
 	startTimeSkript = time.time()
 	configPickle = open(os.path.expanduser('~/.config/whoami.pickle'), 'r')
@@ -113,12 +110,12 @@ if len(sys.argv) == 5:
 		autostart = 'y'
 	else:
 		autostart = None
-	debug = sys.argv[4]
+	debug = int(sys.argv[4])
 
 	for i in range (0,cloneCount):
 		startTimeClone = time.time()
 		newVmName = randomName(vmName)
 		cloneVm(vmName, config.vType)
 		print 'Klon ' + str(i) + ': ' + newVmName
-		debugOut('Time needed: ' + str(time.time() - startTime) , 1)
+		debugOut('Time needed: ' + str(time.time() - startTimeClone) , 1)
 	debugOut('Overall Time needed: ' + str(time.time() - startTimeSkript), 1)

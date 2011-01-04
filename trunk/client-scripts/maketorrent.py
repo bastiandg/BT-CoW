@@ -30,6 +30,12 @@ def hddList(xmlDescription):
 		if hardDisks[i].getAttribute("device") == "disk":
 			hardDisk = hardDisks[i].getElementsByTagName("source")[0].getAttribute("file")
 			hList.append(hardDisk)
+			"""hardDiskFile = hardDisks[i].getElementsByTagName("source")[0].getAttribute("file")
+			hardDiskDev = hardDisks[i].getElementsByTagName("source")[0].getAttribute("dev")
+			if hardDiskFile:
+				hList.append(hardDiskFile)
+			elif hardDiskDev:
+				hList.append(hardDiskDev)"""
 	return hList
 
 def prepareXml(xmlDescription, vmName):
@@ -61,6 +67,10 @@ def makeTorrent(vmName):
 	os.makedirs(torrentDir)
 	
 	hdList = hddList(vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+	for hd in hdList:
+		if not os.path.exists(hd):
+			print 'Festplatte ' + hd + ' nicht vorhanden! \nVerteilen wird abgebrochen.'
+			sys.exit(1)
 	for hd in hdList:
 		os.symlink(hd, torrentDir + '/' + os.path.basename(hd))
 		print hd + "->" + torrentDir + '/' + os.path.basename(hd)

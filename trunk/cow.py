@@ -49,7 +49,6 @@ def vmOffList(hostName, vType):
 	return vOffList
 
 def vmOnList(hostName, vType):
-	#TODO filter DOM0
 	vOnList = []
 	if vType == 'xen':
 		conn = libvirt.open('xen://' + hostName + '/')
@@ -79,10 +78,11 @@ def newVServer():
 	choice = intInput('')
 	
 	command = ['./hostname.sh', ip]
-	hostName = execute(command).replace('\n', '')
+	hostName, stderr = execute(command)
+	hostName = hostName.replace('\n', '')
 	
 	if vHostExists(hostName):
-		print 'der Host ' + hostName + 'schon registriert'
+		print 'der Host ' + hostName + ' ist schon registriert'
 	else :
 		#append the new host
 		vhosts = open(os.path.expanduser('~/.cow/vhosts'), 'a')
@@ -118,8 +118,9 @@ def clone():
 			if vm:
 				cloneCount = raw_input('Anzahl der Klone: ')
 				autostart = raw_input('Nach Erstellung starten? (j/n): ')
-				command = ['ssh', 'root@' + hostName, '/opt/cow/clone.py ' + vm.name() + ' ' + cloneCount + ' ' + autostart + ' ' + str(debug)]
-				execute(command)
+				command = ['ssh', 'root@' + hostName, binDir + '/clone.py ' + vm.name() + ' ' + cloneCount + ' ' + autostart + ' ' + str(debug)]
+				stdout, stderr = execute(command)
+				print stdout
 			else:
 				print 'keine passende VM vorhanden'
 		except libvirt.libvirtError:
@@ -151,7 +152,7 @@ def execute(command):
 	stdout, stderr = s.communicate()
 	debugOut(stdout, 3)
 	debugOut(stderr, 1)
-	return stdout
+	return stdout, stderr
 
 def hddList(xmlDescription):
 	hList = []
@@ -215,8 +216,13 @@ def startDownload(vHostList, vmName):
 	for targetHost in vHostList:
 		debugOut('rsync to ' + targetHost[1], 2)
 		command = ('rsync', '/tmp/' + vmName + '.torrent', 'root@' + targetHost[1] + ':' + downloadDir + '/' + vmName + '.torrent')
-		debugOut(command,3)
+		debugOut(repr(command),3)
 		execute(command)
+		command = ['rsync', '/tmp/' + vmName + '.xml', 'root@' + targetHost[1] + ':/tmp/']
+		execute(command)
+		command = ['ssh', 'root@' + targetHost[1],  'virsh define /tmp/' + vmName + '.xml']
+		execute(command)
+
 		debugOut('del torrent on ' + targetHost[1], 3)
 		command = ['ssh', 'root@' + targetHost[1], 'deluge-console "del ' + vmName + '"']
 		s = subprocess.Popen(command)
@@ -238,9 +244,15 @@ def shareImage():
 				targetHosts = chooseVHosts(hostName,vType)
 				targetHosts.append([-1, hostName, vType])
 				command = ['ssh', 'root@' + hostName, '/opt/cow/maketorrent.py ' + vm.name()]
-				execute(command)
+				stdout, stderr = execute(command)
+				if stderr:
+					print "Fehler: " + stderr
+					return
 				command = ['rsync', 'root@' + hostName + ':' + downloadDir + '/' + vm.name() + '.torrent', '/tmp/' ]
 				execute(command)
+				command = ['rsync', 'root@' + hostName + ':' + downloadDir + '/' + vm.name() + '/' + vm.name() + '.xml', '/tmp/' ]
+				execute(command)
+
 				startDownload(targetHosts, vm.name())
 			else:
 				print 'keine VM vorhanden'

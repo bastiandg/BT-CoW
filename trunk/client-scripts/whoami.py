@@ -44,10 +44,3 @@ if not os.path.exists(os.path.expanduser('~/.config')):
 cowpickle = open(os.path.expanduser('~/.config/whoami.pickle'), 'w')
 pickle.dump(obj, cowpickle)
 cowpickle.close()
-
-#testpickle = open('~/cow.pickle', 'r')
-#obj2 = pickle.load(testpickle)
-
-#print obj2.ip + obj2.name + obj2.vType + obj2.imageDir + obj2.downloadDir
-#print obj.ip + obj.name + obj.vType + obj.imageDir + obj.downloadDir
-
