@@ -1,16 +1,16 @@
 \chapter{Synthese}
-Die Erkenntnisse des vorhegenden Kapitels werden in diesem Kapitel zu ein Konzept für Komplettlösung zusammengefügt. Dieses Konzept soll im Anschluss auf dem geeignetem Wege umgesetzt werden.
+Die Erkenntnisse des vorhegenden Kapitels werden in diesem Kapitel aufgegriffen und zu ein Konzept für Komplettlösung zusammengefügt. Dieses Konzept wird im Anschluss auf dem geeignetem Wege umgesetzt.
 \section{Konzept}
 %\subsection{Einsatzzweck}
-Zweck der entwickelten Verwaltungslösung ist es nicht alle Aspekte Virtualisierung zu verwalten. Sie dient dem Zweck virtuelle Maschinen sehr schnell zu replizieren und die dafür benötigten Vorlagen schnell auf den Virtualisierungsservern zu verteilen. Die einzelnen Vorraussetzungen die dafür nötig sind werden hier dargelegt.
+Zweck der entwickelten Verwaltungslösung ist es nicht alle Aspekte Virtualisierung zu verwalten. Sie dient dem Zweck virtuelle Maschinen sehr schnell zu replizieren und die dafür benötigten Vorlagen schnell auf den Virtualisierungsservern zu verteilen. Die einzelnen Vorraussetzungen die dafür nötig sind, werden hier dargelegt.
 
 \subsection{Steuerung und Kommunikation}
-Um Masterimages in einem Netz mit mehreren Virtualisierungsservern zu verteilen und zu klonen, bedarf es einer Kommunikation zwischen den Rechnern. Diese Kommunikation sollte von einem zentralen Server gesteuert werden. Dieser Verwaltungsserver kann selbst ein Virtualisierungsserver sein oder nur mit der Verwaltung beschäftigt sein.
+Um Masterimages in einem Netz mit mehreren Virtualisierungsservern zu verteilen und zu klonen, bedarf es einer Kommunikation zwischen den Rechnern. Diese Kommunikation sollte von einem zentralen Server gesteuert werden. Dieser Verwaltungsserver kann selbst ein Virtualisierungsserver sein oder ausschließlich mit der Verwaltung beschäftigt sein.
 
-Die Virtualisierungstechniken sollen über eine einheitliche Schnittstelle verwaltet werden. Durch die einheitliche Schnittstelle wird die Verwaltung vereinfacht und zusätzlicher Aufwand vermieden. Das Starten Stoppen und das Definieren virtueller Maschinen sollen über zentrale Schnittstelle erfolgen. Auch die Möglichkeit bei einer Weiterentwicklung des Programms neue Virtualisierungstechniken zu integrieren soll gegeben sein.
+Die Virtualisierungstechniken sollen über eine einheitliche Schnittstelle verwaltet werden. Durch die einheitliche Schnittstelle wird die Verwaltung vereinfacht und zusätzlicher Aufwand vermieden. Das Starten Stoppen und das Definieren virtueller Maschinen erfolgt über zentrale Schnittstelle. Auch die Möglichkeit bei einer Weiterentwicklung des Programms neue Virtualisierungstechniken zu integrieren soll gegeben sein.
 
 \subsection{Verteilung}
-Die Verteilung der Masterimages findet über das BitTorrent-Protokoll statt (siehe Kapitel \ref{verteilung}). Der BitTorrent sollte für eine einfache und automatisierte Verteilung über die Kommandzeile bedienbar sein. Eine weitere Vorraussetzung ist die Unterstützung des Protokolls DHT. DHT ermöglicht das Finden anderer Peers ohne zentralen Tracker. Das ermöglicht es ein BitTorrent-Netzwerk aufzubauen ohne einen Tracker einrichten zu müssen.
+Die Verteilung der Masterimages findet über das BitTorrent-Protokoll statt (siehe Kapitel \ref{verteilung}). Der BitTorrent-Client muss für eine einfache und automatisierte Verteilung über die Kommandzeile bedienbar sein. Eine weitere Vorraussetzung ist die Unterstützung des Protokolls DHT. DHT ermöglicht das Finden anderer Peers ohne zentralen Tracker. Das ermöglicht es ein BitTorrent-Netzwerk aufzubauen ohne einen Tracker einrichten zu müssen.
 
 Zum Starten der Verteilung der Masterimages wird zunächst eine .torrent-Datei erstellt und an alle Virtualisierungsserver gesendet, die es erhalten sollen. Danach wird der BitTorrent-Client gestartet und der Download initiiert.
 
@@ -30,7 +30,7 @@ Für die Programmierung wird die Skriptsprache Python eingesetzt. Da das hier en
 \subsection{Steuerung und Kommunikation}
 Um die Steuerung der Virtualisierungsserver zu vereinfachen und zu vereinheitlichen wird in dieser Arbeit die Virtualisierungs-API libvirt verwendet. Die Virtualisierungstechniken Xen und KVM können beide mit libvirt verwaltet werden. Die Fähigkeiten von libvirt umfassen zum Beispiel das Erstellen, Starten, Stoppen, Pausieren sowie die Migration von virtuellen Maschinen. 
 
-Alle virtuellen Maschinen liegen libvirt als XML-Beschreibungen vor. Sie enthalten Informationen zu der virtuellen Hardware und eine eindeutige Identifikationsnummer. Eine solche XML-Beschreibung ist beispielhaft im Folgenden zu dargestellt.
+Alle virtuellen Maschinen werden von libvirt als XML-Beschreibung verwaltet. Sie enthalten Informationen zu der virtuellen Hardware und eine eindeutige Identifikationsnummer. Eine solche XML-Beschreibung ist beispielhaft im Folgenden zu dargestellt.
 \\
 \begin{lstlisting}[caption=libvirt-XML Beispiel,language=XML,label=libvirtxml]{libvirtxml}
 <domain type='kvm'>
@@ -64,18 +64,18 @@ Alle virtuellen Maschinen liegen libvirt als XML-Beschreibungen vor. Sie enthalt
 </domain>
 \end{lstlisting}
 
-Libvirt bietet die Möglichkeit über das Netzwerk angesprochen zu werden. Außerdem unterstützt libvirt neben Xen und KVM noch andere Virtualisierungstechniken, die bei einer weiteren Entwicklung in die Komplettlösung integriert werden können.%Die Steuerung/Kommunikationsaufgaben die die Virtualisierungstechniken nicht direkt betreffen, werden über das Netzwerkprotokoll ssh getätigt. Dazu gehört das Initiieren des Verteilens der Masterimages und das Klonen der virtuellen Festplatten.
+Libvirt bietet die Möglichkeit über das Netzwerk angesprochen zu werden. Außerdem unterstützt libvirt neben Xen und KVM noch andere Virtualisierungstechniken, die bei einer weiteren Entwicklung in die Komplettlösung integriert werden können. %Die Steuerung/Kommunikationsaufgaben die die Virtualisierungstechniken nicht direkt betreffen, werden über das Netzwerkprotokoll ssh getätigt. Dazu gehört das Initiieren des Verteilens der Masterimages und das Klonen der virtuellen Festplatten.
 
 Die einzelnen Aufgaben wie das Verteilen und das Klonen werden auf den Virtualisierungsservern von lokal installierten Skripten erledigt. So kann vermieden werden, dass unnötig viele Befehle über das Netzwerk gesendet werden müssen. Die Skripte werden über das Netzwerkprotokoll ssh gestartet.
 
 \bild{Kommunikation}{Kommunikation}{pic:kommunikation}{400px}
 
 \subsection{Einrichtung eines Virtualisierungshosts}\label{einrichtung}
-Die Einrichtung wird durchgeführt um alle verwalteten Virtualisierungshosts auf einen einheitlichen Stand zu bringen. Während der Einrichtung wird die nötige Software installiert und es werden Einstellungen vorgenommen. Sie ermöglichen das einfache Kopieren und Klonen von virtuellen Maschinen. Der Ablauf der Einrichtung wird im Folgenden dargelegt. 
+Die Einrichtung wird durchgeführt um auf allen verwalteten Virtualisierungshosts die Grundvorraussetzungen für das Klonen und Verteilen zu schaffen. Während der Einrichtung wird die nötige Software installiert und es werden Einstellungen vorgenommen. Sie ermöglichen das einfache Kopieren und Klonen von virtuellen Maschinen. Der Ablauf der Einrichtung wird im Folgenden dargelegt. 
 
 \textbf{Ablauf}
 
-Der Benutzer gibt zunächst die Hostadresse des Virtualisierungshosts an. Ebenfalls wird die Virtualisierungstechnik des neuen Hosts abgefragt. Nach der Eingabe wird der Rechnername abgefragt ???. Für die einfache Kommunikation wird auf Host der ssh-key des Verwaltungsservers hinzugefügt. 
+Der Benutzer gibt zunächst die Hostadresse des Virtualisierungshosts an. Ebenfalls wird die Virtualisierungstechnik des neuen Hosts abgefragt. Nach der Eingabe wird der Rechnername abgerufen. Für die einfache Kommunikation wird auf Host der ssh-key des Verwaltungsservers hinzugefügt. 
 
 Um nicht alle Aktionen remote über das Netzwerk ausführen zu müssen, werden die Funktion des Klonens und der Verteilung in Skripte ausgelagert. Diese Skripte werden von dem Verwaltungsserver auf den neuen Host übertragen.
 
