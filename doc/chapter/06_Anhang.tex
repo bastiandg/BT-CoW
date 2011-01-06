@@ -1,6 +1,47 @@
 \chapter{Anhang} 
 %\lstset{basicstyle=\ttfamily\fontsize{9pt}{9pt}\selectfont}
 %\begin{comment}
+\section{Skripte/Programme}
+Die einzelnen Aufgaben der Verwaltungslösung werden nicht in einem einzigen Skript abgearbeitet, sondern in einzelne übersichtliche Skripte aufgeteilt. In diesem Unterkapitel werden sie aufgelistet und ihre Funktion beschrieben.
+
+\subsection{Verwaltungsserver}
+Die Skripte des Verwaltungsserver erledigen die Verwaltungs und Einrichtungsaufgaben wahr. Ihre Aufgaben werden hier kurz erklärt.
+
+\textbf{cow.py}
+- Hauptprogramm der Verwaltungslösung es nimmt die Benutzereingaben entgegen und ruft die anderen Skripte auf.
+
+\textbf{hostname.sh} 
+- fragt den Rechnernamen des Virtualisierungsserver ab und trägt dort den ssh-key des Verwaltungsservers ein 
+
+\textbf{servercert.sh}
+- erstellt ein Server-Zertifikat für den Virtualisierungsserver
+
+\textbf{cacert.sh}
+- erstellt das CA-Zertifikat wenn es nicht vorhanden ist und überträgt den öffentlichen Schlüssel des CA-Zertifikats an den Virtualisierungsserver 
+
+\textbf{clientcert.sh}
+- erstellt ein Client-Zertifikat, dass dem Verwaltungsserver Zugriff auf die libvirt-Installationen der Virtualisierungsserver ermöglicht
+
+\subsection{Virtualisierungsserver}
+Diese Skripte liegen auf dem Virtualisierungsserver, sie werden während der Einrichtung vom Verwaltungsserver installiert (siehe \ref{einrichtung}) , um lokal abrufbar zu sein. Ihre Funktionen werden im Folgenden kurz erläutert.
+
+\textbf{clone.py}
+- Klonen der virtuellen Maschinen, es nimmt die nötigen Modifikationen an der XML-Beschreibung der Vorlage vor und klont die virtuellen Festplatten
+
+\textbf{maketorrent.py}
+- erzeugt eine torrent-Datei und startet das Verteilen mit dem BitTorrent-Client
+
+\textbf{packageinstall.py}
+- installiert die benötigten Software-Pakete auf dem Virtualisierungsserver
+
+\textbf{whoami.py}
+- legt eine Konfigurationsdatei mit Informationen zu dem Virtualisierungsserver
+
+\textbf{xenprep.py}
+- nimmt Einstellungen an dem Xen-Daemon vor, damit libvirt den Xen-Daemon abfragen kann 
+
+\section{Code-Listings}
+
 \lstinputlisting[caption=cow.py,language=Python, label=cow.py]{../trunk/cow.py}
 \lstinputlisting[caption=hostname.sh,language=Python, label=cow.py]{../trunk/hostname.sh}
 \lstinputlisting[caption=cacert.sh,language=Python, label=cow.py]{../trunk/cacert.sh}

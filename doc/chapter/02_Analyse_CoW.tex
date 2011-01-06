@@ -7,32 +7,32 @@ Wie in Abbildung \ref{pic:cow} schematisch dargestellt wird, wird bei Copy-on-Wr
 \bild{copyonwrite}{Copy-on-Write}{pic:cow}{420px}
 
 \section{Sparse-Dateien}
-Eine Sparse-Datei ist eine Datei, die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Die Abbildung \ref{pic:sparse} zeigt, dass der tatsächlich benutzte Speicherplatz auf der Festplatte weitaus geringer sein kann als die eigentliche Dateigröße \cite{sparse}.
+Eine Sparse-Datei ist eine Datei, die nicht vom Anfang bis zum Ende beschrieben ist. Sie enthält also Lücken. Um Speicherplatz zu sparen, werden diese Lücken bei Sparse-Dateien nicht auf den Datenträger geschrieben. Die Abbildung \ref{pic:sparse} zeigt, dass der tatsächlich benutzte Speicherplatz auf der Festplatte weitaus geringer sein kann als die eigentliche Dateigröße \cite{Sparse}.
 
 \bild{Sparse}{Sparse-Datei}{pic:sparse}{420px}
 
 Eine Sparse-Datei ist kein eigenes Imageformat sondern eine Optimierungsstrategie. Sie verhilft Copy-on-Write-Images zu einer großen Platzersparnis. In Imageformaten wie qcow2 oder VHD ist diese Optimierungsstrategie ein fester Bestandteil. 
 
-\section{qcow2}
+\section{Imageformat qcow2}
 Das Imageformat qcow2 ist im Rahmen des qemu Projekts entwickelt wurde \cite{qemuwiki}. Es ist der Nachfolger des ebenfalls aus dem qemu Projekt stammenden Formats qcow \cite{qcowmarkmc}.  
 
 \textbf{Vorteile}
 \begin{itemize}
- \item einfache Einrichtung
- \item aktive Entwicklung im Rahmen der Projekte KVM und qemu
+ \item Einfache Einrichtung
+ \item Aktive Entwicklung im Rahmen der Projekte KVM und qemu
 \end{itemize}
 
-\textbf{Nachteile}
+\textbf{Nachteil}
 \begin{itemize}
  \item aktuell fehlende Unterstützung durch mit Xen und andere offene Virtualisierungstechniken (z.B. VirtualBox)
 \end{itemize}
 
-\section{VHD}
+\section{Imagefortmat VHD}
 Das Format VHD ist von Conectix und Microsoft entwickelt worden. Die Spezifikation des Imageformats wurde von Microsoft im Zuge des ``Microsoft Open Specification Promise'' freigegeben \cite{msosp} \cite{vhdspec}. Seit der Freigabe der Spezifikation bieten einige Open Source Virtualisierungslösungen wie qemu, Xen oder VirtualBox die Möglichkeit dieses Format zu verwenden.   
 
 \textbf{Vorteile}
 \begin{itemize}
- \item einfache Einrichtung
+ \item Einfache Einrichtung
  \item Unterstützung durch Softwarehersteller mit hoher Marktakzeptanz
 \end{itemize}
 
@@ -42,22 +42,22 @@ Das Format VHD ist von Conectix und Microsoft entwickelt worden. Die Spezifikati
  \item Verwendung der Copy-on-Write-Funktion von VHD mit KVM nicht möglich
 \end{itemize}
 
-\section{dm-snapshots}
-Die dm-snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Treiber im Linux-Kernel. Er erstellt virtuelle Gerätedateien, die mit bestimmten erweiterten Features wie zum Beispiel Verschlüsselung ausgestattet sind \cite{dmmbroz}. Bei dm-snapshots wird eine solche virtuelle Gerätedatei erstellt, die aus zwei anderen Gerätedateien zusammengesetzt wird. Die erste Gerätedatei ist der Ausgangspunkt, wenn daran Änderungen vorgenommen werden, werden sie als Differenz in der zweiten Gerätedatei gespeichert \cite{dmkerneldoc}. 
+\section{dm-Snapshots}
+Die dm-Snapshots sind eine Funktion des Device Mappers. Device Mapper ist ein Treiber im Linux-Kernel. Er erstellt virtuelle Gerätedateien, die mit bestimmten erweiterten Features wie zum Beispiel Verschlüsselung ausgestattet sind \cite{dmmbroz}. Bei dm-Snapshots wird eine solche virtuelle Gerätedatei erstellt, die aus zwei anderen Gerätedateien zusammengesetzt wird. Die erste Gerätedatei ist der Ausgangspunkt, wenn daran Änderungen vorgenommen werden, werden sie als Differenz in der zweiten Gerätedatei gespeichert \cite{dmkerneldoc}. 
 
 Die von Device Mapper erstellten Gerätedateien benötigen keine Unterstützung der Virtualisierungstechnik, da sie für diese nicht von physikalischen Festplattenpartitionen unterscheidbar sind. Dieses ist nicht nur ein Vorteil, sondern zugleich auch ein Nachteil. Es muss immer vor dem Starten einer virtuellen Maschine das Copy-on-Write-Image und das Masterimage zu einer Gerätedatei verbunden werden.  
 
 \textbf{Vorteile}
 \begin{itemize}
- \item hohes Entwicklungsstadium
- \item gesicherte Weiterentwicklung
- \item unabhängig von Virtualisierungstechnik
+ \item Hohes Entwicklungsstadium
+ \item Gesicherte Weiterentwicklung
+ \item Unabhängig von Virtualisierungstechnik
 \end{itemize}
 
 \textbf{Nachteile}
 \begin{itemize}
  \item Aufwendige Einrichtung
- \item erfordert zusätzlichen Programmstart vor dem VM-Start
+ \item Erfordert zusätzlichen Programmstart vor dem VM-Start
 \end{itemize}
 
 \section{LVM-Snapshots}
@@ -65,9 +65,9 @@ LVM-Snapshots sind ein Teil des Logical Volume Managers. LVM ist eine Software-S
 
 \textbf{Vorteile}
 \begin{itemize}
- \item hohes Entwicklungsstadium
- \item gesicherte Weiterentwicklung
- \item unabhängig von Virtualisierungstechnik
+ \item Hohes Entwicklungsstadium
+ \item Gesicherte Weiterentwicklung
+ \item Unabhängig von Virtualisierungstechnik
 \end{itemize}
 
 \textbf{Nachteile}
@@ -97,29 +97,31 @@ Die Testergebnisse werden in diesem Kapitel zusammenfassend aufgeführt und anal
 
 \begin{comment} Bei dem Iozone-Test wurden Dateigrößen von 512 MB, 2 GB, 4 Gb und 8 GB verwendet. Für die Entscheidungsfindung wird jedoch nur der Test mit 8 GB Dateigröße herangezogen. \end{comment}
 
-\bild{Iozone-kvm-8gb}{Iozone-kvm-8gb}{pic:iozonekvm}{420px}
-Die Abbildung \ref{pic:iozonekvm} zeigt, dass mit KVM qcow2 gegenüber den anderen Copy-on-Write-Techniken einen Geschwindigkeitsvorteil beim sequentiellen Lesen und Schreiben hat. LVM-Snapshots und dm-snapshots liegen hingegen ungefähr gleich auf.
+\bild{Iozone-kvm-8gb}{Performance-Testergebnisse von Iozone für KVM mit der Dateigröße 8gb}{pic:iozonekvm}{420px}
+Die Abbildung \ref{pic:iozonekvm} zeigt, dass mit KVM qcow2 gegenüber den anderen Copy-on-Write-Techniken einen Geschwindigkeitsvorteil beim sequentiellen Lesen und Schreiben hat. Insbesondere bei großen Blockgrößen zeigt sich dieser Vorteil. LVM-Snapshots und dm-Snapshots liegen hingegen ungefähr gleich auf.
 
-\bild{bonnie-kvm-random-seek}{bonnie-kvm-random-seek}{pic:bonniekvm}{420px}
-Abbildung \ref{pic:bonniekvm} ist zu entnehmen, dass qcow2 wie auch bei den sequentiellen Tests vor LVM-Snapshots und dm-snapshots liegt. Der Unterschied zu der echten Festplattenpartition ist in beiden Tests sehr gering. Die guten Werte von qcow2 sowohl beim sequentiellen als auch beim zufälligem Zugriff auf die Festplatte, hängen mit der guten Integration in KVM zusammen.
+\bild{bonnie-kvm-random-seek}{Performance-Testergebnisse von bonnnie++ für KVM}{pic:bonniekvm}{420px}
+Abbildung \ref{pic:bonniekvm} ist zu entnehmen, dass qcow2 wie auch bei den sequentiellen Tests vor LVM-Snapshots und dm-Snapshots liegt. Der Unterschied zu der echten Festplattenpartition ist in beiden Tests sehr gering. Die guten Werte von qcow2 sowohl beim sequentiellen als auch beim zufälligem Zugriff auf die Festplatte, hängen mit der guten Integration in KVM zusammen.
 
-In Xen schneiden die dm-snapshots besser ab als LVM-Snapshots und vhd beim sequentiellen Lesen und Schreiben, wie in Abbildung \ref{pic:iozonexen} zu sehen ist. 
-\bild{Iozone-xen-8gb}{Iozone-xen-8gb}{pic:iozonexen}{420px}
+In Xen schneiden die dm-Snapshots besser ab als LVM-Snapshots und vhd beim sequentiellen Lesen und Schreiben, wie in Abbildung \ref{pic:iozonexen} zu sehen ist. 
+\bild{Iozone-xen-8gb}{Performance-Testergebnisse von Iozone für Xen mit der Dateigröße 8gb}{pic:iozonexen}{420px}
 
-Beim zufälligen Zugriff auf die Festplatte ist unter Xen vhd abgeschlagen hinter LVM-Snapshots und dm-snapshots. Diese sind ungefähr gleichauf und liegen nicht weit hinter der Festplattenpartition (Abbildung \ref{pic:bonniexen}). Das mittelmäßige Abschneiden des Imageformats vhd verwundert, da Citrix, die treibende Kraft der Xen Weiterentwicklung, eine optimierte vhd-Unterstützung entwickelt hat \cite{citrixvhd}. 
-\bild{bonnie-xen-random-seek}{bonnie-xen-random-seek}{pic:bonniexen}{420px}
+Beim zufälligen Zugriff auf die Festplatte ist unter Xen vhd langsamer als LVM-Snapshots und dm-Snapshots. Die LVM-Snapshots und dm-Snapshots haben eine ähnliche Geschwindigkeit und keine signifikanten Nachteile gegenüber der Festplattenpartition (siehe Abbildung \ref{pic:bonniexen}). Trotz der von Citrix für Xen eigens entwickelten vhd-Unterstützung, hat VHD nur ein mittelmäßiges Ergebnis erzielt \cite{citrixvhd}. 
+\bild{bonnie-xen-random-seek}{Performance-Testergebnisse von bonnnie++ Xen}{pic:bonniexen}{420px}
 
-Die Testergebnisse zeigen, dass es Geschwindigkeitsunterschiede zwischen den Copy-on-Write-Technniken gibt. Diese Unterschiede in der Geschwindigkeit sind aber nicht so gravierend, dass man einzelne Copy-on-Write-Lösungen aufgrund der Performance-Tests kategorisch ausschließen müsste. Dennoch sind besonders die Vorteile von qcow2 in Verbindung mit KVM zu erwähnen. Für Xen gibt es kein Image-Format, dass ähnliche Testergebnisse wie qcow2 in Verbindung mit KVM vorweisen kann. 
+Die Testergebnisse zeigen, dass es Geschwindigkeitsunterschiede zwischen den Copy-on-Write-Technniken gibt. Diese Unterschiede in der Geschwindigkeit sind aber nicht so groß, dass man einzelne Copy-on-Write-Lösungen aufgrund der Performance-Tests kategorisch ausschließen müsste. Dennoch sind besonders die Vorteile von qcow2 in Verbindung mit KVM zu erwähnen. Für Xen gibt es kein Image-Format (siehe Abbildung 2.5), dass ähnliche Testergebnisse wie qcow2 in Verbindung mit KVM (siehe Abbildung 2.4) vorweisen kann. 
 
 \section{Fazit}
-Es gibt bei den Testergebnissen keinen klaren Gewinner oder Verlierer. Im Großen und Ganzen fallen bei den Ergebnissen unter den einzelnen Copy-on-Write Verfahren keine bemerkenswerten Unterschiede auf. Aufgrund des unterschiedlichen Implementierungen der Copy-on-Write-Techniken in KVM und Xen, wird auch für die beiden Virtualisierungslösungen ein jeweiliges Fazit gezogen.
+Es gibt bei den Testergebnissen keine eindeutige Empfehlung für eine Copy-on-Write-Technik aufgrund der Geschwindigkeit. Im Großen und Ganzen fallen bei den Ergebnissen unter den einzelnen Copy-on-Write Verfahren Unterschiede auf, sie lassen jedoch keine eindeutige Entscheidung zu.
+
+Aufgrund des unterschiedlichen Implementierungen der Copy-on-Write-Techniken in KVM und Xen, wird auch für die beiden Virtualisierungslösungen ein jeweiliges Fazit gezogen.
 
 \subsection{KVM}
-Unter KVM gibt es die Alternativen dm-snapshots LVM-Snapshots oder qcow2. Das von Microsoft entwickelte vhd kommt nicht in Frage. KVM unterstützt zwar das vhd-Format, jedoch nicht die Copy-on-Write-Funktion des Formats. 
+Unter KVM gibt es die Alternativen dm-Snapshots, LVM-Snapshots oder qcow2. Das von Microsoft entwickelte vhd kommt nicht in Frage, da KVM zwar das VHD-Format unterstützt, aber nicht die Copy-on-Write-Funktion des Formats. 
 
-Die effizienteste Lösung für Copy-on-Write mit KVM ist qcow2. Dafür gibt es mehrere Gründe. Das qcow2-Format ist Teil des qemu-Projekts und damit sehr gut in dem darauf basierendem KVM integriert. Durch die gute Integration werden sehr gute Performance-Werte erreicht. Außerdem lässt es sich im Gegensatz zu dm-snapshots und LVM-Snapshots leichter administrieren.
+Die effizienteste Lösung für Copy-on-Write mit KVM ist qcow2. Dafür gibt es mehrere Gründe. Das qcow2-Format ist Teil des qemu-Projekts und damit sehr gut in dem darauf basierendem KVM integriert. Durch die gute Integration werden sehr gute Performance-Werte erreicht. Außerdem lässt es sich im Gegensatz zu dm-Snapshots und LVM-Snapshots leichter administrieren.
 
 \subsection{Xen}
-Die für Xen zur Verfügung stehenden Copy-on-Write-Formate sind dm-snapshots, LVM-snapshots und VHD. Xen ünterstützte in einigen vergangenen Versionen qcow2, diese Unterstützung ist jedoch nicht in der aktuellen Version enthalten (Version 4.0.1)  \cite{qcow2support}. 
+Die für Xen zur Verfügung stehenden Copy-on-Write-Formate sind dm-Snapshots, LVM-Snapshots und VHD. Xen ünterstützte in einigen vergangenen Versionen qcow2, diese Unterstützung ist jedoch nicht in der aktuellen Version 4.0.1 enthalten \cite{qcow2support}. 
 
-Für Xen ist VHD aktuell die attraktivste Copy-on-Write-Lösung. Es ist zwar laut der Performance-Tests nicht die schnellste Lösung, hat aber wesentliche Vorteile gegenüber dm-snapshots und LVM-Snapshots. Es werden keine Änderungen am Xen-Quelltext benötigt, wie es bei dm-snapshots der Fall ist \cite{racecondition}. Die Funktion der Live-Migration ist mit vhd leichter zu realisieren als mit LVM-Snapshots und dm-snapshots. Die im weiteren Verlauf dieser Arbeit verwendete Lösung ist VHD. Falls Xen in den nächsten Versionen wieder qcow2 unterstützt, sollte jedoch die Verwendung von qcow2 auch unter Xen geprüft werden. 
+Für Xen ist VHD aktuell die attraktivste Copy-on-Write-Lösung. Es ist zwar laut der Performance-Tests nicht die schnellste Lösung, hat aber wesentliche Vorteile gegenüber dm-Snapshots und LVM-Snapshots. Es werden keine Änderungen am Xen-Quelltext benötigt, wie es bei dm-Snapshots der Fall ist \cite{racecondition}. Die Funktion der Live-Migration ist mit vhd leichter zu realisieren als mit LVM-Snapshots und dm-Snapshots. Die im weiteren Verlauf dieser Arbeit verwendete Lösung ist VHD. Falls Xen in den nächsten Versionen wieder qcow2 unterstützt, sollte jedoch die Verwendung von qcow2 auch unter Xen geprüft werden. 
