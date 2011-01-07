@@ -92,7 +92,7 @@ def newVServer():
 		command = ['rsync', '-r', 'client-scripts/' ,'root@' + hostName + ':' + binDir]
 		execute(command)
 		
-		command = ['ssh', 'root@' + hostName, '/opt/cow/packageinstall.py "deluged deluge-console mktorrent libvirt-bin python-libvirt dnsmasq-base"' ]
+		command = ['ssh', 'root@' + hostName, '/opt/cow/packageinstall.py "deluged deluge-console mktorrent libvirt-bin python-libvirt"' ]
 		execute(command)
 
 		command = ['./cacert.sh', hostName]

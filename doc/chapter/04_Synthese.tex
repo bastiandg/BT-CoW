@@ -83,13 +83,41 @@ Die Einrichtung wird durchgeführt, um auf allen verwalteten Virtualisierungshos
 
 \textbf{Ablauf}
 
-Der Benutzer gibt zunächst die Hostadresse des Virtualisierungshosts an. Ebenfalls wird die Virtualisierungstechnik des neuen Hosts abgefragt. Nach der Eingabe wird der Rechnername abgerufen. Für die einfache Kommunikation wird der ssh-key des Verwaltungsservers auf dem zu verwaltenden Virtualisierungshost hinzugefügt. 
+Der Benutzer gibt zunächst die Hostadresse des Virtualisierungshosts an. Ebenfalls wird die Virtualisierungstechnik des neuen Hosts abgefragt. Nach der Eingabe wird der Rechnername abgerufen. Für die einfache Kommunikation wird der ssh-key des Verwaltungsservers auf dem zu verwaltenden Virtualisierungshost hinzugefügt (siehe Listing \ref{hostname} Zeile 3 und 4).
+\\
+\begin{lstlisting}[caption=Abruf des Rechnernamens und Kopieren des ssh-keys (hostname.sh),language=Bash,label=hostname]{hostname}
+#!/bin/bash
+ip="$1"
+host=$(ssh root@$ip 'echo "$HOSTNAME"')
+ssh-copy-id root@$host > /dev/null
+\end{lstlisting}
 
 Um nicht alle Aktionen remote über das Netzwerk ausführen zu müssen, werden die Funktion des Klonens und der Verteilung in Skripte ausgelagert. Diese Skripte werden von dem Verwaltungsserver auf den neuen Host übertragen.
+\\
+\begin{lstlisting}[caption=Übertragung der Client-Skripte,language=Python,label=clientscripts]{clientscripts}
+command = ['rsync', '-r', 'client-scripts/' ,'root@' + hostName + ':' + binDir]
+execute(command)
+\end{lstlisting}
 
 Im Anschluss folgt die Installation der benötigten Software-Pakete. Es werden die Pakete für libvirt, deluge, sowie für administrative Tools installiert. 
+\\
+\begin{lstlisting}[caption=Paketinstallation auf dem Virtualisierungsserver,language=Python,label=packageinstall]{packageinstall}
+command = ['ssh', 'root@' + hostName, '/opt/cow/packageinstall.py "deluged deluge-console mktorrent libvirt-bin python-libvirt"' ]
+execute(command)
+\end{lstlisting}
 
 Für die Abfrage über das Netzwerk verwendet libvirt Zertifikate. Es gibt drei unterschiedliche Zertifikate. Das Server-Zertifikat dient dazu die Echtheit des Virtualisierungsservers zu validieren. Das Client-Zertifikat wird von dem Server dazu verwendet, den Client zu validieren und ihm somit Zugriff zu gewähren. Das CA-Zertifikat wird benötigt um die anderen beiden Zertifikate zu erstellen und zu zertifizieren. Das Server-Zertifikat wird von dem Verwaltungsserver erstellt. Nach der Erstellung wird es auf dem Virtualisierungsserver abgelegt. (\textbf{Hinweis:} Dies ist nur eine vereinfachte Darstellung des Zertifikate-Systems. Eine ausführliche Beschreibung ist unter \href{http://wiki.libvirt.org/page/TLSSetup}{http://wiki.libvirt.org/page/TLSSetup} zu finden.) 
+\\
+\begin{lstlisting}[caption=Erstellung des Serverzertifikats für den Virtualisierungsserver,language=Bash,label=servercert]{servercert}
+certtool --generate-privkey > "$tempdir/serverkey.pem"
+certtool --generate-certificate --load-privkey "$tempdir/serverkey.pem" \
+  --load-ca-certificate /etc/pki/CA/cacert.pem --load-ca-privkey /etc/pki/CA/private/cakey.pem \
+  --template "$tempdir/server.info" --outfile "$tempdir/servercert.pem" 2> "/var/log/cow.log"
+
+ssh "root@$host" "mkdir -p /etc/pki/libvirt/private/"
+rsync "$tempdir/serverkey.pem" "root@$host:/etc/pki/libvirt/private/serverkey.pem"
+rsync "$tempdir/servercert.pem" "root@$host:/etc/pki/libvirt/servercert.pem"
+\end{lstlisting}
 
 Die verwalteten Virtualisierungsserver werden in als Liste in einer Klartext Datei abgespeichert. Sie enhält zu jedem Virtualisierungsserver den Rechnernamen sowie die Virtualisierungstechnik. 
 
@@ -128,16 +156,48 @@ def chooseVm(hostName,vType):
 		vmId = intInput('ID: ')
 		return vOffList[vmId]
 \end{lstlisting}
-Außerdem gibt der Benutzer an welche Virtualisierungsserver die virtuelle Maschine verteilt werden soll. Nach der Auswahl der Server und der VM, erstellt das Skript \lstinline|maketorrent.py| (siehe \ref{einrichtung}) eine torrent-Datei aus der XML-Beschreibung von libvirt und den virtuellen Festplatten. Sie wird an alle ausgewählten V-Hosts mit rsync weitergegeben. Nun werden alle BitTorrent-Clients gestartet und die erstellte torrent-Datei hinzugefügt. Durch das Hinzufügen wird automatisch der Download bzw. die Verteilung gestartet.
+Außerdem gibt der Benutzer an welche Virtualisierungsserver die virtuelle Maschine verteilt werden soll. Nach der Auswahl der Server und der VM, erstellt das Skript \lstinline|maketorrent.py| (siehe Kapitel \ref{einrichtung}) eine torrent-Datei aus der XML-Beschreibung von libvirt und den virtuellen Festplatten. Sie wird an alle ausgewählten V-Hosts mit rsync weitergegeben. 
+
+
+Zuletzt werden alle BitTorrent-Clients gestartet und die erstellte torrent-Datei hinzugefügt. Durch das Hinzufügen wird automatisch der Download bzw. die Verteilung gestartet.
 
 \subsection{Klonen}
 Für das Klonen der virtuellen Maschinen werden die von den Virtualisierungstechniken mitgebrachten Tools verwendet. Auf einem Xen-Server ist es das Tool \textit{vhd-util}, bei KVM \textit{kvm-img}. Um die virtuelle Maschine zu klonen müssen Änderungen an der XML-Beschreibung vorgenommen werden und die Festplatten mit den Tools der Virtualisierungstechniken von der Vorlage abgeleitet werden. Der Ablauf des Klonens wird im Folgenden beschrieben.  %Nach dem Klonen der virtuellen Festplatten muss in libvirt eine neue virtuelle Machine definiert werden. Dabei dient die Beschreibung der vervielfältigten virtuellen  Maschine als Vorlage.
+\\
+\begin{lstlisting}[caption=VM-Auswahl,language=Python, label=chooseVm]{chooseVm}
+ def cloneHddKvm(hdd, newHddPath):
+	command = ['kvm-img', 'info' , hdd]
+	baseFormat = re.search('file format: (?P<format>[\S]*)', execute(command)).groupdict()['format']
+	command = ['kvm-img', 'create', '-f', 'qcow2', '-b', hdd, '-o','backing_fmt=' + baseFormat, newHddPath]
+	execute(command)
+
+def cloneHddXen(hdd, newHddPath):
+	command = ['vhd-util', 'snapshot', '-n', newHddPath, '-p', hdd]
+	execute(command)
+\end{lstlisting}
 
 \textbf{Ablauf}
 
-Beim Klonen einer virtuellen Maschine wählt der Benutzer, wie bei der Verteilung, einen Virtualisierungs-Host und eine virtuelle Maschine aus (siehe \ref{chooseVm}). Zusätzlich dazu wird die Anzahl der Klone und die Option alle Klone sofort zu starten abgefragt. Nach den erfolgten Benutzereingaben ruft das Verwaltungsrogramm das auf dem Virtualisierungsserver befindliche Skript \lstinline|clone.py| zum Klonen auf.
+Beim Klonen einer virtuellen Maschine wählt der Benutzer, wie bei der Verteilung, einen Virtualisierungs-Host und eine virtuelle Maschine aus (siehe Listing \ref{chooseVm}). Zusätzlich dazu wird die Anzahl der Klone und die Option alle Klone sofort zu starten abgefragt. Nach den erfolgten Benutzereingaben ruft das Verwaltungsrogramm das auf dem Virtualisierungsserver befindliche Skript \lstinline|clone.py| zum Klonen auf.
+\\
+\begin{lstlisting}[caption=Starten des Klonvorgangs,language=Python,label=clonestart]{clonestart}
+command = ['ssh', 'root@' + hostName, binDir + '/clone.py ' + vm.name() + ' ' + cloneCount + ' ' + autostart + ' ' + str(debug)]
+stdout, stderr = execute(command)
+\end{lstlisting}
 
-Im ersten Schritt des Klonvorgangs generiert das Skript einen neuen Namen. Der Name setzt sich aus dem alten Namen und 6 zufälligen und Buchstaben zusammen. Der nächste Schritt ist es die Beschreibung der Vorlage aus libvirt zu laden. Aus ihr werden die Festplatten der Vorlage ausgelesen und geklont. Die Identifikationsnummer und die MAC-Adresse aus der Beschreibung werden gelöscht und der neue Name eingetragen. Die MAC-Adresse und die Identifikationsnummer generiert libvirt neu beim Anlegen der geklonten VM. Die Änderungen an der XML-Beschreibung sind in dem Listing \ref{modifiedXML} zu sehen. Alle entfernten Zeilen sind rot markiert, alle hinzugefügten grün.
+Im ersten Schritt des Klonvorgangs generiert das Skript einen neuen Namen. Der Name setzt sich aus dem alten Namen und 6 zufälligen und Buchstaben zusammen.
+\\
+\begin{lstlisting}[caption=Erstellen des Namens der VM,language=Python, label=vmname]{vmname}
+def randomName(vmName):
+	length = len(vmName) + 6
+	chars = string.letters+string.digits
+	name = vmName
+	while(len(name) < int(length)):
+		name += random.choice(chars)
+	return name
+\end{lstlisting}
+
+Der nächste Schritt ist es die Beschreibung der Vorlage aus libvirt zu laden. Aus ihr werden die Festplatten der Vorlage ausgelesen und geklont. Die Identifikationsnummer und die MAC-Adresse aus der Beschreibung werden gelöscht und der neue Name eingetragen. Die MAC-Adresse und die Identifikationsnummer generiert libvirt neu beim Anlegen der geklonten VM. Die Änderungen an der XML-Beschreibung sind in dem Listing \ref{modifiedXML} zu sehen. Alle entfernten Zeilen sind rot markiert, alle hinzugefügten grün.
 \\
 \begin{lstlisting}[caption=modifizierte XML-Beschreibung,language=diff,label=modifiedXML]{modifiedXML}
  <domain type='kvm'>
@@ -148,9 +208,7 @@ Im ersten Schritt des Klonvorgangs generiert das Skript einen neuen Namen. Der N
    <memory>512000</memory>
    <currentMemory>512000</currentMemory>
    <vcpu>1</vcpu>
-    .
-    .
-    .
+   [...]
    <devices>
      <emulator>/usr/bin/kvm</emulator>
      <disk type='file' device='disk'>
@@ -170,3 +228,4 @@ Im ersten Schritt des Klonvorgangs generiert das Skript einen neuen Namen. Der N
 \end{lstlisting}
 
 %\subsection{Fehlerbehandlung} Benutzereingabe Hostausfall Debugging
+\subsection{Gesamtübersicht der Implementierung}

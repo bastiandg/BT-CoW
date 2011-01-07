@@ -27,7 +27,6 @@ def randomName(vmName):
 	name = vmName
 	while(len(name) < int(length)):
 		name += random.choice(chars)
-	#TODO? Sicherheitsabfrage
 	return name
 
 def execute(command):
@@ -94,7 +93,6 @@ def cloneHddKvm(hdd, newHddPath):
 	execute(command)
 
 def cloneHddXen(hdd, newHddPath):
-	#TODO 
 	command = ['vhd-util', 'snapshot', '-n', newHddPath, '-p', hdd]
 	execute(command)
 
