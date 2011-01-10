@@ -8,9 +8,9 @@ Ein Multicast ist eine Mehrpunktverbindung. Der Sender schickt die Daten gleichz
 
 Da es bei den Masterimages darauf ankommt, dass sie komplett und fehlerfrei dupliziert werden, kann der Sender maximal so schnell senden, wie es der langsamste Empfänger entgegen nehmen kann.  Dadurch ist die Verwendung von Multicast, in einer heterogenen Umgebung mit einem langsamen oder weit entfernten Empfänger, sehr ineffizient. Anwendung findet Multicast heute vor allem bei der Verteilung von Multimediadaten \cite{multicastfefe}. 
 
-\bild{multicast}{Multicast Beispiel}{pic:multicast}{400px}
+\bild{multicast}{Multicast Beispiel}{pic:multicast}{375px}
 
-\textbf{Vorteile}
+\textbf{Vorteil}
 \begin{itemize}
  \item Sehr hohe Geschwindigkeit durch Parallelität
 \end{itemize}
@@ -25,7 +25,7 @@ Da es bei den Masterimages darauf ankommt, dass sie komplett und fehlerfrei dupl
 \section{Netzwerkprotokoll BitTorrent}
 BitTorrent ist ein Netzwerkprotokoll zum effizienten Verteilen großer Dateien oder Sammlungen von großen Dateien. Die Empfänger der Daten sind hierbei gleichzeitig auch Sender, sie werden Peers genannt \cite{btspec}. Damit wird nicht ein einziger zentraler Sender ausgelastet, sondern die Last wird auch auf alle Empfänger verteilt (zu sehen in Abbildung \ref{pic:bittorrent}). Für die Kontaktaufnahme der Peers untereinander wird ein sogenannter Tracker benötigt. Aktuellere BitTorrent-Clients können aber auch trackerlos über eine verteilte Hashtabelle (engl. ``Distributed Hash Table''; DHT) andere Peers finden \cite{dhtspec}. Durch den Einsatz von DHT kann die Einrichtung eines Trackers eingespart werden. Außerdem bringt es zusätzliche Ausfallsichertheit, da die Liste der verfügbaren Peers dezentral gespeichert wird. 
 
-\bild{bittorrent}{Bittorrent Beispiel}{pic:bittorrent}{400px}
+\bild{bittorrent}{Bittorrent Beispiel}{pic:bittorrent}{375px}
 
 Die zu übertragenden Daten werden nicht komplett in einem Stück übermittelt, sondern in Blöcke aufgeteilt. Bei zwischenzeitlichen Netzausfällen müssen somit auch nicht alle Daten noch einmal übertragen werden. Der BitTorrent-Client setzt nach dem Netzwerkausfall die Datenübertragung problemlos fort und muss nur gegebenenfalls die bereits übertragenen Daten einen Blockes verwerfen.
 
@@ -44,7 +44,7 @@ Die zu übertragenden Daten werden nicht komplett in einem Stück übermittelt, 
 \section{Netzwerkprotokoll NFS}
 NFS (Network File System) ist ein Protokoll für das Bereitstellen von Daten über das Netzwerk. Das ist ein großer Unterschied zu den beiden vorher genannten Technologien. Die Daten werden nicht von einem Rechner auf den anderen kopiert, sondern über das Netzwerk wie eine lokale Festplatte zur Verfügung gestellt \cite{nfsspec}. Der Server macht hierbei eine Freigabe die von dem Clientrechner ``gemountet'' wird \cite{nfslinux}. Die vom Clientrechner gemountete Freigabe wird in der Verzeichnisbaum eingebunden und kann wie lokales Verzeichnis angesteuert werden.
 
-\bild{nfs}{NFS Beispiel}{pic:nfs}{400px}
+\bild{nfs}{NFS Beispiel}{pic:nfs}{375px}
 
 \textbf{Vorteile}
 \begin{itemize}
@@ -70,14 +70,14 @@ Der dezentrale Aufbau des BitTorrent-Netzes macht es sehr skalierbar. Jeder zus�
 
 \subsection{Störanfälligkeit}
 Hier wird verglichen wie sich der Ausfall eines Netzwerkknotens auf die Verteilung auswirken. BitTorrent ist besonders unanfällig auf Ausfälle im Netz. Dieses wird durch die dezentrale Struktur ermöglicht. Wenn ein einzelner Netzwerkknoten ausfällt, besteht trotzdem unter den noch verfügbaren Knoten ein Netz. 
-\bild{bittorrent_ausfall}{Bittorrent Netzwerkausfall}{pic:bittorrent_ausfall}{400px}
+\bild{bittorrent_ausfall}{Bittorrent Netzwerkausfall}{pic:bittorrent_ausfall}{375px}
 
 NFS und Multicast haben im Unterschied zu BitTorrent einen großen Nachteil, da die Verteilung über einen einzigen Knoten stattfindet. Der Ausfall eines bestimmten Knotens führt also zum kompletten Abbruch der Verteilung. Man nennt diesen Punkt \textit{Single Point of Failure}. 
 \bild{multicast_ausfall}{Multicast Netzwerkausfall}{pic:multicast_ausfall}{300px}
 
 Bei NFS gibt es beim Bereitstellen der Masterimages zusätzlich die Problematik, dass der Festplattenzugriff der virtuellen Maschinen von der Verfügbarkeit des NFS-Servers abhängt. Ein Ausfall führt damit zu dem Abstürzen der virtuellen Maschinen.
 
-\bild{nfs_ausfall}{NFS Netzwerkausfall}{pic:nfs_ausfall}{400px}
+\bild{nfs_ausfall}{NFS Netzwerkausfall}{pic:nfs_ausfall}{375px}
 
 \subsection{Verteilungsdauer}
 Besonders hervorzuheben ist NFS, da es nicht wie BitTorrent und Multicast die Masterimages verteilt sondern bereitstellt. Dadurch benötigt es keine Zeit die Masterimages zu verteilen und kann sie direkt zur Verfügung stellen. 

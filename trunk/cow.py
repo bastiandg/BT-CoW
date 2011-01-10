@@ -36,17 +36,6 @@ def vmList(hostName, vType):
 	except libvirt.libvirtError:
 		print 'Host ' + hostName + '(' + vType + ') nicht erreichbar'
 
-def vmOffList(hostName, vType):
-	vOffList = []
-	if vType == 'xen':
-		conn = libvirt.open('xen://' + hostName + '/')
-	else:
-		conn = libvirt.open('qemu://' + hostName + '/system')
-	
-	for name in conn.listDefinedDomains():
-		vOffList.append(conn.lookupByName(name))
-	
-	return vOffList
 
 def vmOnList(hostName, vType):
 	vOnList = []
