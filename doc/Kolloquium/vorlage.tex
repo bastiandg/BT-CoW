@@ -14,27 +14,8 @@
 \definecolor{NiceRed}{rgb}{0.89, 0.0, 0.52}
 \definecolor{CodeGreen}{rgb}{0.0, 0.49, 0.08}
 \usepackage{listings}		% Code einbinden
-\lstloadlanguages{Java}
+\usepackage{green}
 
-\lstset{
-  language=Java,
-  %basicstyle=\ttfamily,
-  basicstyle=\ttfamily\footnotesize,
-  keywordstyle=\ttfamily\color{NiceRed},
-  commentstyle=\color{DarkBlue},
-  stringstyle=\color{CodeGreen},
-  %backgroundcolor=\color{ListingBackground},
-  breaklines=true,         % Zeilen umbrechen wenn notwendig.
-  breakautoindent=true,    % Nach dem Zeilenumbruch Zeile einr�cken.
-  postbreak=\space,        % Bei Leerzeichen umbrechen.
-  moredelim=**[is][\bfseries]{<<}{>>},
-  %xleftmargin=0.3cm
-  }
-
-\definecolor{technikdunkel}{RGB}{64,138,15}
-\definecolor{technik}{RGB}{94,168,45}
-\definecolor{technikhell}{RGB}{224,255,185}
-\definecolor{korpus}{RGB}{138,198,203}
 \setbeamertemplate{footline}
 {%
   \leavevmode%
@@ -59,36 +40,6 @@
 % \ttfamily\fontsize{9pt}{10pt}\selectfont
 % \ttfamily\fontsize{9pt}{10pt}\selectfont
 %\setbeamertemplate{itemize item}{\color{technikdunkel}\ttfamily\fontsize{90pt}\selectfont.}
-\setbeamertemplate{itemize item}{\includegraphics[width=5px]{kreis}}
-\setbeamercolor{title}{use=structure,fg=white,bg=technik}
-
-
-% \setbeamercolor*{palette primary}{use=structure,fg=white,bg=structure.fg}
-\setbeamercolor*{palette primary}{use=structure,fg=white,bg=technikdunkel}
-\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=white!99!white}
-\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=white!90!technik}
-\setbeamercolor*{palette quaternary}{fg=black,bg=technikhell}
-
-\setbeamercolor*{sidebar}{use=structure,bg=structure.fg}
-
-\setbeamercolor*{palette sidebar primary}{use=structure,fg=technik!10}
-\setbeamercolor*{palette sidebar secondary}{fg=white}
-\setbeamercolor*{palette sidebar tertiary}{use=structure,fg=technik!50}
-\setbeamercolor*{palette sidebar quaternary}{fg=white}
-
-\setbeamercolor*{titlelike}{parent=palette primary}
-
-\setbeamercolor*{separation line}{}
-\setbeamercolor*{fine separation line}{}
-
-\setbeamercolor{block title}{use=structure,fg=white,bg=korpus}
-\setbeamercolor{block title alerted}{use=alerted text,fg=white,bg=alerted text.fg!75!black}
-\setbeamercolor{block title example}{use=example text,fg=white,bg=example text.fg!75!black}
-
-\setbeamercolor{block body}{parent=normal text,use=block title,bg=block title.bg!10!bg}
-\setbeamercolor{block body alerted}{parent=normal text,use=block title alerted,bg=block title alerted.bg!10!bg}
-\setbeamercolor{block body example}{parent=normal text,use=block title example,bg=block title example.bg!10!bg}
-
 
 \begin{document}
 \title{Effiziente Speicherung virtueller Festplatten mit bestehender OpenSource-Software}  
@@ -113,7 +64,7 @@ Einführung
 
 \end{frame}
 
-\section{Klonen}
+\section{Verteilung}
 
 \begin{frame}
 \frametitle{Vorhandene Lösungen} 

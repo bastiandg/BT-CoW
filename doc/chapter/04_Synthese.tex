@@ -12,25 +12,25 @@ Die zu entwickelnde Verwaltungslösung dient dem Zweck virtuelle Maschinen sehr 
 Im Folgenden werden diese Voraussetzungen im Einzelnen erläutert.
 
 \subsection{Steuerung und Kommunikation}
-Um Masterimages in einem Netz mit mehreren Virtualisierungsservern zu verteilen und zu klonen, bedarf es einer Kommunikation zwischen den Rechnern. Diese Kommunikation sollte von einem zentralen Server gesteuert werden. Dieser Verwaltungsserver kann selbst ein Virtualisierungsserver sein oder ausschließlich mit der Verwaltung beschäftigt sein.
+Um Masterimages in einem Netz mit mehreren Virtualisierungsservern zu verteilen und zu klonen, bedarf es einer Kommunikation zwischen den Rechnern. Diese Kommunikation sollte von einem zentralen Server gesteuert werden können. Dieser Verwaltungsserver kann selbst ein Virtualisierungsserver sein oder ausschließlich mit der Verwaltung beschäftigt sein.
 
-Die Virtualisierungstechniken sollen über eine einheitliche Schnittstelle verwaltet werden. Durch die einheitliche Schnittstelle wird die Verwaltung vereinfacht und zusätzlicher Aufwand vermieden. Das Starten Stoppen und das Definieren virtueller Maschinen erfolgt über zentrale Schnittstelle. Auch die Möglichkeit bei einer Weiterentwicklung des Programms neue Virtualisierungstechniken zu integrieren soll gegeben sein.
+Die Virtualisierungstechniken sollen über eine einheitliche Schnittstelle verwaltet werden können. Durch die einheitliche Schnittstelle wird die Verwaltung vereinfacht und zusätzlicher Aufwand vermieden. Das Starten Stoppen und das Definieren virtueller Maschinen erfolgt über eine zentrale Schnittstelle. Auch die Möglichkeit bei einer Weiterentwicklung des Programms neue Virtualisierungstechniken zu integrieren soll gegeben sein.
 
 \subsection{Verteilung}
-Die Verteilung der Masterimages findet über das BitTorrent-Protokoll statt (siehe Kapitel \ref{verteilung}). Der BitTorrent-Client muss für eine einfache und automatisierte Verteilung über die Kommandozeile bedienbar sein. Eine weitere Voraussetzung ist die Unterstützung des Protokolls DHT. DHT ermöglicht das Finden anderer Peers ohne zentralen Tracker. Das ermöglicht es ein BitTorrent-Netzwerk aufzubauen ohne einen Tracker einrichten zu müssen.
+Die Verteilung der Masterimages findet über das BitTorrent-Protokoll statt (siehe Kapitel \ref{verteilung}). Der BitTorrent-Client muss für eine einfache und automatisierte Verteilung über die Kommandozeile bedienbar sein. Eine weitere Voraussetzung ist die Unterstützung des Protokolls DHT. DHT ermöglicht das Finden anderer Peers ohne zentralen Tracker. %Das ermöglicht es ein BitTorrent-Netzwerk aufzubauen ohne einen Tracker einrichten zu müssen.
 
 Zum Starten der Verteilung der Masterimages wird zunächst eine Torrent-Datei erstellt und an alle Virtualisierungsserver gesendet, die es erhalten sollen. Danach wird der BitTorrent-Client gestartet und der Download initiiert.
 
-Nicht jeder Virtualisierungsserver kann das Verteilen initiieren, sondern nur das Verwaltungsprogramm des Verwaltungsservers. Dies gewährleistet, dass nicht jeder Virtualisierungsserver auf jeden anderen zugreifen kann.
+Nicht jeder Virtualisierungsserver kann das Verteilen initiieren, sondern nur das Verwaltungsprogramm des Verwaltungsservers. Dies gewährleistet, dass nicht jeder Virtualisierungsserver auf jeden anderen zugreifen können muss.
 
 \subsection{Klonen}
-Das Klonen wird, wie auch die Verteilung, von dem zentralen Verwaltungsserver verwaltet. Für das eigentliche Klonen der virtuellen Festplatten werden die in den Virtualisierungstechniken integrierten Programme eingesetzt. 
+Das Klonen wird, wie auch die Verteilung, von dem zentralen Verwaltungsserver initiiert. Für das eigentliche Klonen der virtuellen Festplatten werden die in den Virtualisierungstechniken integrierten Programme eingesetzt. 
 
 \section{Implementierung}
-In diesem Unterkapitel werden die oben genannten Punkte aufgegriffen und deren Umsetzung beschrieben. Im einzelnen wird hier auf die Punkte wie die Verwaltung der virtuellen Maschinen, das Klonen und die Verteilung eingegangen. Eine Auflistung aller entwickelten Skripte findet sich im Anhang (siehe Kapitel \ref{skripte}).
+In diesem Unterkapitel werden die oben genannten Punkte aufgegriffen und deren Umsetzung beschrieben. Im einzelnen wird hier auf die Punkte wie die Verwaltung der virtuellen Maschinen, das Klonen und die Verteilung eingegangen. Eine Auflistung der entwickelten Skripte findet sich im Anhang (siehe Kapitel \ref{skripte}).
 
 \subsection{Rahmenbedingungen}
-Die Komplettlösung wird auf einem Debian squeeze System implementiert. In der Implementierung werden ein paar wenige debianspezifische Befehle wie zum Beispiel \textit{apt-get} verwendet. Diese können aber leicht für andere Linux-Distributionen portiert werden. Neben den oben genannten Software kommen ssh und rsync zum Einsatz.
+Die Verwaltungslösung wird auf einem Debian squeeze System implementiert. In der Implementierung werden ein paar wenige debianspezifische Befehle wie zum Beispiel \textit{apt-get} verwendet. Diese können aber leicht für andere Linux-Distributionen portiert werden. Neben der oben genannten Software kommen ssh und rsync zum Einsatz.
 
 Für die Programmierung wird die Skriptsprache Python eingesetzt. Da das hier entwickelte Verwaltungsprogramm nicht zeitkritisch ist, hat die Performanz keine hohe Priorität. Viel wichtiger ist es, den Wartungsaufwand niedrig zu halten. Mit diesen Bedingungen ist die Skriptsprache Python eine sehr gute Wahl.
 %\subsection{Programmierstil?}
@@ -38,7 +38,7 @@ Für die Programmierung wird die Skriptsprache Python eingesetzt. Da das hier en
 \subsection{Steuerung und Kommunikation}
 Um die Steuerung der Virtualisierungsserver zu vereinfachen und zu vereinheitlichen wird in dieser Arbeit die Virtualisierungs-API libvirt verwendet. Die Virtualisierungstechniken Xen und KVM können beide mit libvirt verwaltet werden. Die Fähigkeiten von libvirt umfassen zum Beispiel das Erstellen, Starten, Stoppen, Pausieren sowie die Migration von virtuellen Maschinen. 
 
-Alle virtuellen Maschinen werden von libvirt als XML-Beschreibung verwaltet. Sie enthalten Informationen zu der virtuellen Hardware und eine eindeutige Identifikationsnummer. Eine solche XML-Beschreibung ist beispielhaft im folgenden Listing \ref{libvirtxml} zu dargestellt.
+Alle virtuellen Maschinen werden von libvirt als XML-Beschreibung verwaltet. Sie enthalten Informationen zu der virtuellen Hardware und eine eindeutige Identifikationsnummer. Eine solche XML-Beschreibung ist beispielhaft im folgenden Listing \ref{libvirtxml} dargestellt.
 \\
 \begin{lstlisting}[caption=libvirt-XML Beispiel,language=XML,label=libvirtxml]{libvirtxml}
 <domain type='kvm'>
@@ -98,16 +98,18 @@ command = ['rsync', '-r', 'client-scripts/' ,'root@' + hostName + ':' + binDir]
 execute(command)
 \end{lstlisting}
 
-Im Anschluss folgt die Installation der benötigten Software-Pakete. Es werden die Pakete für libvirt, deluge, sowie für administrative Tools installiert, wie das Listing \ref{clientscripts} zeigt. 
+Im Anschluss folgt die Installation der benötigten Software-Pakete. Es werden die Pakete für libvirt, deluge (siehe Kapitel \ref{verteilung}), sowie für administrative Tools installiert, wie das Listing \ref{clientscripts} zeigt. 
 \\
 \begin{lstlisting}[caption=Paketinstallation auf dem Virtualisierungsserver,language=Python,label=packageinstall]{packageinstall}
 command = ['ssh', 'root@' + hostName, '/opt/cow/packageinstall.py "deluged deluge-console mktorrent libvirt-bin python-libvirt"' ]
 execute(command)
 \end{lstlisting}
 
-Für die Abfrage über das Netzwerk verwendet libvirt Zertifikate. Es gibt drei unterschiedliche Zertifikate. Das Server-Zertifikat dient dazu die Echtheit des Virtualisierungsservers zu validieren. Das Client-Zertifikat wird von dem Server dazu verwendet, den Client zu validieren und ihm somit Zugriff zu gewähren. Das CA-Zertifikat wird benötigt um die anderen beiden Zertifikate zu erstellen und zu zertifizieren. Das Server-Zertifikat wird von dem Verwaltungsserver erstellt. Nach der Erstellung wird es, wie in Listing \ref{servercert} zu sehen, auf dem Virtualisierungsserver abgelegt. (\textbf{Hinweis:} Dies ist nur eine vereinfachte Darstellung des Zertifikate-Systems. Eine ausführliche Beschreibung ist unter \cite{libvirttls} zu finden.) 
+Für die Abfrage über das Netzwerk verwendet libvirt X.509-Zertifikate. Es gibt drei unterschiedliche Zertifikate. Das Server-Zertifikat dient dazu die Echtheit des Virtualisierungsservers zu validieren. Das Client-Zertifikat wird von dem Server dazu verwendet, den Client zu authentifizieren und ihm dann Zugriff zu gewähren. Das CA-Zertifikat wird benötigt um die anderen beiden Zertifikate zu generieren und zu signieren.
+
+In der Implementierung wird das Server-Zertifikat für den Virtualisierungsserver auf dem Verwaltungsserver generiert. Aus Gründen der Einfachheit wird es vom Verwaltungsserver generiert, in der Regel generiert sonst jeder Server sein eigenes Zertifikat. Nach der Erstellung wird das Server-Zertifikat, wie in Listing \ref{servercert} zu sehen, auf dem Virtualisierungsserver abgelegt. (\textbf{Hinweis:} Dies ist nur eine vereinfachte Darstellung des Zertifikate-Infrastruktur. Eine ausführliche Beschreibung ist unter \cite{libvirttls} zu finden.)
 \\
-\begin{lstlisting}[caption=Erstellung des Serverzertifikats für den Virtualisierungsserver,language=Bash,label=servercert]{servercert}
+\begin{lstlisting}[caption=Erstellung des Server-Zertifikats für den jeweiligen Virtualisierungsserver,language=Bash,label=servercert]{servercert}
 certtool --generate-privkey > "$tempdir/serverkey.pem"
 certtool --generate-certificate --load-privkey "$tempdir/serverkey.pem" \
   --load-ca-certificate /etc/pki/CA/cacert.pem --load-ca-privkey /etc/pki/CA/private/cakey.pem \
@@ -118,9 +120,9 @@ rsync "$tempdir/serverkey.pem" "root@$host:/etc/pki/libvirt/private/serverkey.pe
 rsync "$tempdir/servercert.pem" "root@$host:/etc/pki/libvirt/servercert.pem"
 \end{lstlisting}
 
-Die verwalteten Virtualisierungsserver werden in als Liste in einer Klartextdatei abgespeichert. Sie enthält zu jedem Virtualisierungsserver den Rechnernamen sowie die Virtualisierungstechnik. \label{vhosts}
+Die verwalteten Virtualisierungsserver werden als Liste in einer Klartextdatei abgespeichert. Sie enthält zu jedem Virtualisierungsserver den Rechnernamen sowie die Virtualisierungstechnik. \label{vhosts}
 
-\subsection{Verteilung}
+\subsection{Verteilung}\label{verteilung}
 Für den Zweck der Verteilung, kommt in dieser Arbeit \textit{deluge} als BitTorrent-Client zum Einsatz. Er kann komplett über die Kommandozeile gesteuert werden und hat die Möglichkeit per DHT andere Peers zu finden.
 
 \textbf{Ablauf}
@@ -134,13 +136,13 @@ def hostList():
 	for i in range(0,len(hosts)):
 		host = hosts[i].split('\t')
 		if len(host) == 2: #ignore malformed rows
-			hostList.append([len(hostList), host[0], host[1].replace('\n','')])
+			hostList.append([len(hostList), host[0], host[1].strip()])
 	return hostList
 \end{lstlisting}
 
-Die Methode für die Auswahl lässt den Benutzer zwischen allen ausgeschalteten virtuellen Maschinen auswählen. Diese werden wie im folgenden Listing \ref{vmlist} über die Virtualisierungs-API abgerufen.
+Die Funktion für die Auswahl lässt den Benutzer zwischen allen ausgeschalteten virtuellen Maschinen auswählen. Diese werden wie im folgenden Listing \ref{vmlist} über die Virtualisierungs-API abgerufen.
 \\
-\begin{lstlisting}[caption=Abruf der ausgeschalteten virtuellen mit libvirt,language=Python, label=vmlist]{vmlist}
+\begin{lstlisting}[caption=Abruf der ausgeschalteten virtuellen Maschine mit libvirt,language=Python, label=vmlist]{vmlist}
 def vmOffList(hostName, vType):
 	vOffList = []
 	if vType == 'xen':
@@ -153,9 +155,12 @@ def vmOffList(hostName, vType):
 	
 	return vOffList
 \end{lstlisting}
-Außerdem gibt der Benutzer an welche Virtualisierungsserver die virtuelle Maschine verteilt werden soll. Nach der Auswahl der Server und der VM, erstellt das Skript \lstinline|maketorrent.py| (siehe Kapitel \ref{einrichtung}) eine Torrent-Datei aus der XML-Beschreibung von libvirt und den virtuellen Festplatten. Sie wird an alle ausgewählten Virtualisierungsserver mit rsync weitergegeben. 
-
-
+Außerdem gibt der Benutzer an, auf welche Virtualisierungsserver die virtuelle Maschine verteilt werden soll. Nach der Auswahl der Server und der VM erstellt das Skript \lstinline|maketorrent.py| (siehe Listing \ref{mktorrent}) eine Torrent-Datei aus der XML-Beschreibung von libvirt und den virtuellen Festplatten. Sie wird an alle ausgewählten Virtualisierungsserver mit rsync weitergegeben. 
+\\
+\begin{lstlisting}[caption=Erstellen der Torrent-Datei,language=Python, label=mktorrent]{mktorrent}
+command = ['mktorrent', '-a', config.ip, '-o' , torrentFileName, torrentDir]
+execute(command)
+\end{lstlisting}
 Zuletzt werden alle BitTorrent-Clients gestartet und die erstellte torrent-Datei hinzugefügt. Durch das Hinzufügen wird automatisch der Download bzw. die Verteilung gestartet.
 
 \subsection{Klonen}
@@ -163,7 +168,7 @@ Für das Klonen der virtuellen Maschinen werden die von den Virtualisierungstech
 
 \textbf{Ablauf}
 
-Beim Klonen einer virtuellen Maschine wählt der Benutzer, wie bei der Verteilung, einen Virtualisierungs-Host und eine virtuelle Maschine aus (siehe Listing \ref{chooseVm}). Zusätzlich dazu wird die Anzahl der Klone und die Option alle Klone sofort zu starten abgefragt. Nach den erfolgten Benutzereingaben ruft das Verwaltungsprogramm das auf dem Virtualisierungsserver befindliche Skript \lstinline|clone.py| zum Klonen auf.
+Beim Klonen einer virtuellen Maschine wählt der Benutzer, wie bei der Verteilung, einen Virtualisierungs-Host und eine virtuelle Maschine aus. Zusätzlich dazu wird die Anzahl der Klone und die Option alle Klone sofort zu starten abgefragt. Nach den erfolgten Benutzereingaben ruft das Verwaltungsprogramm das auf dem Virtualisierungsserver befindliche Skript \lstinline|clone.py| zum Klonen auf.
 \\
 \begin{lstlisting}[caption=Starten des Klonvorgangs,language=Python,label=clonestart]{clonestart}
 command = ['ssh', 'root@' + hostName, binDir + '/clone.py ' + vm.name() + ' ' + cloneCount + ' ' + autostart + ' ' + str(debug)]
@@ -182,7 +187,7 @@ def randomName(vmName):
 	return name
 \end{lstlisting}
 
-Der nächste Schritt ist es die Beschreibung der Vorlage aus libvirt zu laden. Aus ihr werden die Festplatten der Vorlage ausgelesen und geklont. Wie in dem folgenden Listing \ref{clonevm} gezeigt wird, gibt es unterschiedliche Klon-Methoden für Xen und KVM. Sie rufen die Klonwerzeuge der jeweiligen Virtualisierungstechnik auf.
+Der nächste Schritt ist es die Beschreibung der Vorlage aus libvirt zu laden. Aus ihr werden die Festplatten der Vorlage ausgelesen und geklont. Wie in dem folgenden Listing \ref{clonevm} gezeigt wird, gibt es unterschiedliche Klon-Funktionen für Xen und KVM. Sie rufen die Klonwerkzeuge der jeweiligen Virtualisierungstechnik auf.
 \\
 \begin{lstlisting}[caption=VM-Auswahl,language=Python, label=clonevm]{clonevm}
  def cloneHddKvm(hdd, newHddPath):
@@ -233,4 +238,4 @@ Die Softwarelösung unterscheidet grundsätzlich zwischen zwei unterschiedlichen
 
 \bild{Kommunikation}{Kommunikation}{pic:kommunikation}{375px}
 
-Die aufwendigeren Aktionen wie das Klonen und erstellen der Torrent-Datei werden nicht über das Netzwerk vom Virtualisierungsserver erledigt. Statt dessen sind sie in Skripte auf dem Virtualisierungsservern ausgelagert. Der Virtualisierungsserver übernimmt das sammeln der Parameter und übergibt sie den lokalen Skripten beim Starten per ssh.
+Die aufwendigeren Aktionen wie das Klonen und erstellen der Torrent-Datei werden nicht über das Netzwerk vom Virtualisierungsserver erledigt. Statt dessen sind sie in Skripte auf den Virtualisierungsservern ausgelagert. Der Verwaltungsserver übernimmt das sammeln der Parameter und übergibt sie den lokalen Skripten auf den Virtualisierungsservern beim Starten per ssh.

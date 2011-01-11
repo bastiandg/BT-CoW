@@ -1,50 +1,55 @@
 \chapter{Anhang} 
 %\lstset{basicstyle=\ttfamily\fontsize{9pt}{9pt}\selectfont}
-%\begin{comment}
+
 \section{Skripte/Programme}\label{skripte}
 Die einzelnen Aufgaben der Verwaltungslösung werden nicht in einem einzigen Skript abgearbeitet, sondern in einzelne übersichtliche Skripte aufgeteilt. In diesem Unterkapitel werden sie aufgelistet und ihre Funktion beschrieben.
 
 \subsection{Verwaltungsserver}
-Die Skripte des Verwaltungsserver erledigen die Verwaltungs und Einrichtungsaufgaben wahr. Ihre Aufgaben werden hier kurz erklärt.
+Die Skripte des Verwaltungsservers nehmen die Verwaltungs- und Einrichtungsaufgaben wahr. Ihre Aufgaben werden hier kurz erklärt.
 
 \textbf{cow.py}
-- Hauptprogramm der Verwaltungslösung es nimmt die Benutzereingaben entgegen und ruft die anderen Skripte auf.
+- Hauptprogramm der Verwaltungslösung: Es nimmt die Benutzereingaben entgegen und ruft die anderen Skripte auf.
 
 \textbf{hostname.sh} 
-- fragt den Rechnernamen des Virtualisierungsserver ab und trägt dort den ssh-key des Verwaltungsservers ein 
+- fragt den Rechnernamen des Virtualisierungsservers ab und trägt dort den ssh-key des Verwaltungsservers ein. 
 
 \textbf{servercert.sh}
-- erstellt ein Server-Zertifikat für den Virtualisierungsserver
+- erstellt ein Server-Zertifikat für den Virtualisierungsserver.
 
 \textbf{cacert.sh}
-- erstellt das CA-Zertifikat wenn es nicht vorhanden ist und überträgt den öffentlichen Schlüssel des CA-Zertifikats an den Virtualisierungsserver 
+- erstellt das CA-Zertifikat wenn es nicht vorhanden ist und überträgt den öffentlichen Schlüssel des CA-Zertifikats an den jeweiligen Virtualisierungsserver.
 
 \textbf{clientcert.sh}
-- erstellt ein Client-Zertifikat, dass dem Verwaltungsserver Zugriff auf die libvirt-Installationen der Virtualisierungsserver ermöglicht
+- erstellt ein Client-Zertifikat, dass dem Verwaltungsserver Zugriff auf die libvirt-Installationen der Virtualisierungsserver ermöglicht.
 
 \subsection{Virtualisierungsserver}
-Diese Skripte liegen auf dem Virtualisierungsserver, sie werden während der Einrichtung vom Verwaltungsserver installiert (siehe \ref{einrichtung}) , um lokal abrufbar zu sein. Ihre Funktionen werden im Folgenden kurz erläutert.
+Diese Skripte liegen auf den Virtualisierungsserven. Sie werden während der Einrichtung vom Verwaltungsserver installiert (siehe \ref{einrichtung}) , um lokal abrufbar zu sein. Ihre Funktionen werden im Folgenden kurz erläutert.
 
 \textbf{clone.py}
-- Klonen der virtuellen Maschinen, es nimmt die nötigen Modifikationen an der XML-Beschreibung der Vorlage vor und klont die virtuellen Festplatten
+- Klonen der virtuellen Maschinen; Das Programm nimmt die nötigen Modifikationen an der XML-Beschreibung der Vorlage vor und klont die virtuellen Festplatten.
 
 \textbf{maketorrent.py}
-- erzeugt eine torrent-Datei und startet das Verteilen mit dem BitTorrent-Client
+- erzeugt eine torrent-Datei und startet das Verteilen mit dem BitTorrent-Client.
 
 \textbf{packageinstall.py}
-- installiert die benötigten Software-Pakete auf dem Virtualisierungsserver
+- installiert die benötigten Software-Pakete auf dem Virtualisierungsserver.
 
 \textbf{whoami.py}
-- legt eine Konfigurationsdatei mit Informationen zu dem Virtualisierungsserver
+- legt eine Konfigurationsdatei mit Informationen zu dem Virtualisierungsserver an.
 
 \textbf{xenprep.py}
-- nimmt Einstellungen an dem Xen-Daemon vor, damit libvirt den Xen-Daemon abfragen kann 
+- nimmt Einstellungen an dem Xen-Daemon vor, damit libvirt den Xen-Daemon abfragen kann.
 \newpage
 \section{Testergebnisse}
-
+Im Folgenden sind alle Testergebnisse von bonnie++ und Iozone dargestellt.
+\bild{iozone-xen}{Iozone Testergebnisse für Xen}{pic:iozonexen}{375px}
+\bild{bonnie-xen}{Bonnie++ Testergebnisse für Xen}{pic:bonniexen}{375px}
+\bild{bonnie-kvm}{Bonnie++ Testergebnisse für KVM}{pic:bonniekvm}{375px}
+\bild{iozone-kvm}{Iozone Testergebnisse für KVM}{pic:iozonekvm}{375px}
 \newpage
-\section{Code-Listings}
 
+\begin{comment}
+\section{Code-Listings}
 \lstinputlisting[caption=cow.py,language=Python, label=cow.py]{../trunk/cow.py}
 \lstinputlisting[caption=hostname.sh,language=Python, label=cow.py]{../trunk/hostname.sh}
 \lstinputlisting[caption=cacert.sh,language=Python, label=cow.py]{../trunk/cacert.sh}
@@ -56,4 +61,4 @@ Diese Skripte liegen auf dem Virtualisierungsserver, sie werden während der Ein
 \lstinputlisting[caption=client-scripts/packageinstall.py,language=Python, label=packageinstall.py]{../trunk/client-scripts/packageinstall.py}
 \lstinputlisting[caption=client-scripts/whoami.py,language=Python, label=whoami.py]{../trunk/client-scripts/whoami.py}
 \lstinputlisting[caption=client-scripts/xenprep.py,language=Python, label=xenprep.py]{../trunk/client-scripts/xenprep.py}
-%\end{comment}
+\end{comment}
