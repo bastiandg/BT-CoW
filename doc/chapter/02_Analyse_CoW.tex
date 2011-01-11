@@ -1,9 +1,9 @@
 \chapter{Analyse Copy-on-Write}
-Für das Erstellen mehrerer gleichartiger Virtueller Maschinen benötigt man mehrere Virtuelle Festplatten. Das kann man auf herkömmliche Art und Weise lösen, in dem ein vorhandenes Festplattenimage n mal kopiert wird. Durch das häufige Kopieren entstehen allerdings große Mengen an Daten. Außerdem benötigt es viel Zeit Festplattenimages zu kopieren. Um diesen beiden Problemen entgegen zu wirken werden Copy-on-Write-Strategien eingesetzt.
+Für das Erstellen mehrerer gleichartiger virtueller Maschinen benötigt man mehrere virtuelle Festplatten. Das kann man auf herkömmliche Art und Weise lösen, in dem ein vorhandenes Festplattenimage N mal kopiert wird. Durch das häufige Kopieren entstehen allerdings große Mengen an Daten. Außerdem benötigt es viel Zeit Festplattenimages zu kopieren. Um diesen beiden Problemen entgegen zu wirken werden Copy-on-Write-Strategien eingesetzt.
 
-Die Copy-on-Write-Strategie wird von Unix-artigen Betriebssystemen verwendet, um Arbeitsspeicher einzusparen. Es wird eingesetzt um nicht den ganzen Speicherbereich eines ``geforkten'' Prozesses kopieren zu müssen \cite{linuxcow}. Die Vorteile der Optimierungsstrategie zeigen sich jedoch auch bei der Speicherung virtueller Festplatten.
+Die Copy-on-Write-Strategie wird von Unix-artigen Betriebssystemen verwendet, um Arbeitsspeicher einzusparen. Sie wird eingesetzt um nicht den ganzen Speicherbereich eines ``geforkten'' Prozesses kopieren zu müssen \cite{linuxcow}. Die Vorteile der Optimierungsstrategie zeigen sich jedoch auch bei der Speicherung virtueller Festplatten.
 
-Wie in Abbildung \ref{pic:cow} schematisch dargestellt wird, wird bei Copy-on-Write nicht das gesamte Image kopiert. Es werden in dem Copy-on-Write-Image nur die Veränderungen zu dem so genannten Master- oder Quellimage gespeichert. Für die Platzersparnis werden Sparse-Dateien genutzt, welche im Folgenden erklärt werden. Außerdem werden die unterschiedlichen Verfahren zur Verwendung von Copy-on-Write erläutert und analysiert.
+Wie in Abbildung \ref{pic:cow} schematisch dargestellt ist, wird bei Copy-on-Write nicht das gesamte Image kopiert. Es werden in dem Copy-on-Write-Image nur die Veränderungen zu dem so genannten Master- oder Quellimage gespeichert. Für die Platzersparnis werden Sparse-Dateien genutzt, welche im Folgenden erklärt werden. Außerdem werden die unterschiedlichen Verfahren zur Verwendung von Copy-on-Write erläutert und analysiert.
 \bild{copyonwrite}{Copy-on-Write}{pic:cow}{375px}
 
 \section{Sparse-Dateien}
@@ -24,7 +24,7 @@ Das Imageformat qcow2 ist im Rahmen des qemu Projekts entwickelt wurde \cite{qem
 
 \textbf{Nachteil}
 \begin{itemize}
- \item aktuell fehlende Unterstützung durch mit Xen und andere offene Virtualisierungstechniken (z.B. VirtualBox)
+ \item aktuell fehlende Unterstützung durch Xen und andere offene Virtualisierungstechniken (z.B. VirtualBox)
 \end{itemize}
 
 \section{Imageformat VHD}
@@ -39,7 +39,7 @@ Das Format VHD ist von Conectix und Microsoft entwickelt worden. Die Spezifikati
 \textbf{Nachteile}
 \begin{itemize}
  \item Weiterentwicklung scheint derzeit fragwürdig
- \item Verwendung der Copy-on-Write-Funktion von VHD mit KVM nicht möglich
+ \item Verwendung der Copy-on-Write-Funktion von VHD mit KVM derzeit nicht möglich
 \end{itemize}
 
 \section{dm-Snapshots}
@@ -106,15 +106,15 @@ Abbildung \ref{pic:bonniekvm} ist zu entnehmen, dass qcow2 wie auch bei den sequ
 In Xen schneiden die dm-Snapshots besser ab als LVM-Snapshots und VHD beim sequentiellen Lesen und Schreiben, wie in Abbildung \ref{pic:iozonexen} zu sehen ist. 
 \bild{Iozone-xen-8gb}{Performance-Testergebnisse von Iozone für Xen mit der Dateigröße 8gb}{pic:iozonexen}{375px}
 
-Beim zufälligen Zugriff auf die Festplatte ist unter Xen VHD langsamer als LVM-Snapshots und dm-Snapshots. Die LVM-Snapshots und dm-Snapshots haben eine ähnliche Geschwindigkeit und keine signifikanten Nachteile gegenüber der Festplattenpartition (siehe Abbildung \ref{pic:bonniexen}). Trotz der von Citrix für Xen eigens entwickelten VHD-Unterstützung, hat VHD nur ein mittelmäßiges Ergebnis erzielt \cite{citrixVHD}. 
+Bei zufälligen Zugriff auf die Festplatte unter Xen ist VHD langsamer als LVM-Snapshots und dm-Snapshots. Die LVM-Snapshots und dm-Snapshots haben eine ähnliche Geschwindigkeit und keine signifikanten Nachteile gegenüber der Festplattenpartition (siehe Abbildung \ref{pic:bonniexen}). Trotz der von Citrix für Xen eigens entwickelten VHD-Unterstützung, hat VHD nur ein mittelmäßiges Ergebnis erzielt \cite{citrixVHD}. 
 \bild{bonnie-xen-random-seek}{Performance-Testergebnisse von bonnnie++ Xen}{pic:bonniexen}{375px}
 
-Die Testergebnisse zeigen, dass es Geschwindigkeitsunterschiede zwischen den Copy-on-Write-Technniken gibt. Diese Unterschiede in der Geschwindigkeit sind aber nicht so groß, dass man einzelne Copy-on-Write-Lösungen aufgrund der Performance-Tests kategorisch ausschließen müsste. Dennoch sind besonders die Vorteile von qcow2 in Verbindung mit KVM zu erwähnen. Für Xen gibt es kein Image-Format (siehe Abbildung 2.5), dass ähnliche Testergebnisse wie qcow2 in Verbindung mit KVM (siehe Abbildung 2.4) vorweisen kann. 
+Die Testergebnisse zeigen, dass es Geschwindigkeitsunterschiede zwischen den Copy-on-Write-Technniken gibt. Diese Unterschiede in der Geschwindigkeit sind aber nicht so groß, dass man einzelne Copy-on-Write-Lösungen aufgrund der Performance-Tests kategorisch ausschließen müsste. Dennoch sind besonders die Vorteile von qcow2 in Verbindung mit KVM zu erwähnen. Für Xen gibt es zur Zeit kein Image-Format (siehe Abbildung 2.5), dass ähnliche Testergebnisse wie qcow2 in Verbindung mit KVM (siehe Abbildung 2.4) vorweisen kann. 
 
 \section{Fazit}
 Es gibt bei den Testergebnissen keine eindeutige Empfehlung für eine Copy-on-Write-Technik aufgrund der Geschwindigkeit. Im Großen und Ganzen fallen bei den Ergebnissen unter den einzelnen Copy-on-Write Verfahren Unterschiede auf, sie lassen jedoch keine eindeutige Entscheidung zu.
 
-Aufgrund des unterschiedlichen Implementierungen der Copy-on-Write-Techniken in KVM und Xen, wird auch für die beiden Virtualisierungslösungen ein jeweiliges Fazit gezogen.
+Aufgrund der unterschiedlichen Implementierungen der Copy-on-Write-Techniken in KVM und Xen, wird auch für die beiden Virtualisierungslösungen ein jeweiliges Fazit gezogen.
 
 \subsection{KVM}
 Unter KVM gibt es die Alternativen dm-Snapshots, LVM-Snapshots oder qcow2. Das von Microsoft entwickelte VHD kommt nicht in Frage, da KVM zwar das VHD-Format unterstützt, aber nicht die Copy-on-Write-Funktion des Formats. 

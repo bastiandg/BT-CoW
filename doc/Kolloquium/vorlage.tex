@@ -1,0 +1,128 @@
+\documentclass{beamer}
+\setbeamertemplate{navigation symbols}{}
+\usepackage{beamerthemeshadow}
+\usepackage[ngerman]{babel}	% Spracheinstellungen
+\usepackage[utf8]{inputenc}	% Zeichencodierung
+\usepackage[T1]{fontenc}
+\beamersetuncovermixins{\opaqueness<1>{25}}{\opaqueness<2->{15}}
+
+
+% --------------------------- Alles fuer die Code-Listings -----------------------------
+\usepackage{xcolor}
+\definecolor{ListingBackground}{rgb}{0.9,0.9,0.9}
+\definecolor{DarkBlue}{rgb}{0,0.08,0.45}
+\definecolor{NiceRed}{rgb}{0.89, 0.0, 0.52}
+\definecolor{CodeGreen}{rgb}{0.0, 0.49, 0.08}
+\usepackage{listings}		% Code einbinden
+\lstloadlanguages{Java}
+
+\lstset{
+  language=Java,
+  %basicstyle=\ttfamily,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\ttfamily\color{NiceRed},
+  commentstyle=\color{DarkBlue},
+  stringstyle=\color{CodeGreen},
+  %backgroundcolor=\color{ListingBackground},
+  breaklines=true,         % Zeilen umbrechen wenn notwendig.
+  breakautoindent=true,    % Nach dem Zeilenumbruch Zeile einr�cken.
+  postbreak=\space,        % Bei Leerzeichen umbrechen.
+  moredelim=**[is][\bfseries]{<<}{>>},
+  %xleftmargin=0.3cm
+  }
+
+\definecolor{technikdunkel}{RGB}{64,138,15}
+\definecolor{technik}{RGB}{94,168,45}
+\definecolor{technikhell}{RGB}{224,255,185}
+\definecolor{korpus}{RGB}{138,198,203}
+\setbeamertemplate{footline}
+{%
+  \leavevmode%
+  \hbox{\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm plus1fill,rightskip=.3cm]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshortinstitute
+%     \includegraphics[width=20px]{univentionklein}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+ \titlegraphic{\includegraphics[width=0.3\columnwidth]{technik} \hskip0.5cm \includegraphics[width=0.35\columnwidth]{univentionkomplett}} 
+% 	Fachbereich Technik \\
+% 	Abteilung Elektrotechnik und Informatik
+% \setbeamertemplate{enumerate item}{\color{technikdunkel}\insertenumlabel.}
+\setbeamertemplate{enumerate item}{\begin{overpic}[scale=.4,unit=1mm]%
+{kreis.pdf}
+\put(25,20){\ttfamily\fontsize{9pt}{9pt}\selectfont\color{white}\insertenumlabel}
+\end{overpic}}
+% \ttfamily\fontsize{9pt}{10pt}\selectfont
+% \ttfamily\fontsize{9pt}{10pt}\selectfont
+%\setbeamertemplate{itemize item}{\color{technikdunkel}\ttfamily\fontsize{90pt}\selectfont.}
+\setbeamertemplate{itemize item}{\includegraphics[width=5px]{kreis}}
+\setbeamercolor{title}{use=structure,fg=white,bg=technik}
+
+
+% \setbeamercolor*{palette primary}{use=structure,fg=white,bg=structure.fg}
+\setbeamercolor*{palette primary}{use=structure,fg=white,bg=technikdunkel}
+\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=white!99!white}
+\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=white!90!technik}
+\setbeamercolor*{palette quaternary}{fg=black,bg=technikhell}
+
+\setbeamercolor*{sidebar}{use=structure,bg=structure.fg}
+
+\setbeamercolor*{palette sidebar primary}{use=structure,fg=technik!10}
+\setbeamercolor*{palette sidebar secondary}{fg=white}
+\setbeamercolor*{palette sidebar tertiary}{use=structure,fg=technik!50}
+\setbeamercolor*{palette sidebar quaternary}{fg=white}
+
+\setbeamercolor*{titlelike}{parent=palette primary}
+
+\setbeamercolor*{separation line}{}
+\setbeamercolor*{fine separation line}{}
+
+\setbeamercolor{block title}{use=structure,fg=white,bg=korpus}
+\setbeamercolor{block title alerted}{use=alerted text,fg=white,bg=alerted text.fg!75!black}
+\setbeamercolor{block title example}{use=example text,fg=white,bg=example text.fg!75!black}
+
+\setbeamercolor{block body}{parent=normal text,use=block title,bg=block title.bg!10!bg}
+\setbeamercolor{block body alerted}{parent=normal text,use=block title alerted,bg=block title alerted.bg!10!bg}
+\setbeamercolor{block body example}{parent=normal text,use=block title example,bg=block title example.bg!10!bg}
+
+
+\begin{document}
+\title{Effiziente Speicherung virtueller Festplatten mit bestehender OpenSource-Software}  
+\author{Bastian de Groot}
+\institute{Hoschule Emden-Leer}
+\date{\today} 
+%\definecolor{Name}{System}{Zusammensetzung}
+
+
+\begin{frame}
+\titlepage
+\end{frame} 
+
+\section{Copy-on-Write}
+\begin{frame}
+\frametitle{Copy-on-Write} 
+Einführung
+\end{frame}
+
+\begin{frame}
+\frametitle{Funktionsweise} 
+
+\end{frame}
+
+\section{Klonen}
+
+\begin{frame}
+\frametitle{Vorhandene Lösungen} 
+\begin{itemize}
+
+ \item BitTorrent
+ \item Multicast
+ \item NFS
+ 
+\end{itemize}
+\end{frame}
+\end{document}
