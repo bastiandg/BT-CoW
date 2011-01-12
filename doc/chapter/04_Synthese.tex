@@ -93,14 +93,14 @@ ssh-copy-id root@$host > /dev/null
 
 Um nicht alle Aktionen remote über das Netzwerk ausführen zu müssen, werden die Funktion des Klonens und der Verteilung in Skripte ausgelagert. Diese Skripte werden von dem Verwaltungsserver auf den neuen Host übertragen (siehe Listing \ref{clientscripts}).
 \\
-\begin{lstlisting}[caption=Übertragung der Client-Skripte,language=Python,label=clientscripts]{clientscripts}
+\begin{lstlisting}[caption=Übertragung der Client-Skripte (cow.py),language=Python,label=clientscripts]{clientscripts}
 command = ['rsync', '-r', 'client-scripts/' ,'root@' + hostName + ':' + binDir]
 execute(command)
 \end{lstlisting}
 
 Im Anschluss folgt die Installation der benötigten Software-Pakete. Es werden die Pakete für libvirt, deluge (siehe Kapitel \ref{verteilung}), sowie für administrative Tools installiert, wie das Listing \ref{clientscripts} zeigt. 
 \\
-\begin{lstlisting}[caption=Paketinstallation auf dem Virtualisierungsserver,language=Python,label=packageinstall]{packageinstall}
+\begin{lstlisting}[caption=Paketinstallation auf dem Virtualisierungsserver (cow.py),language=Python,label=packageinstall]{packageinstall}
 command = ['ssh', 'root@' + hostName, '/opt/cow/packageinstall.py "deluged deluge-console mktorrent libvirt-bin python-libvirt"' ]
 execute(command)
 \end{lstlisting}
@@ -109,7 +109,7 @@ Für die Abfrage über das Netzwerk verwendet libvirt X.509-Zertifikate. Es gibt
 
 In der Implementierung wird das Server-Zertifikat für den Virtualisierungsserver auf dem Verwaltungsserver generiert. Aus Gründen der Einfachheit wird es vom Verwaltungsserver generiert, in der Regel generiert sonst jeder Server sein eigenes Zertifikat. Nach der Erstellung wird das Server-Zertifikat, wie in Listing \ref{servercert} zu sehen, auf dem Virtualisierungsserver abgelegt. (\textbf{Hinweis:} Dies ist nur eine vereinfachte Darstellung des Zertifikate-Infrastruktur. Eine ausführliche Beschreibung ist unter \cite{libvirttls} zu finden.)
 \\
-\begin{lstlisting}[caption=Erstellung des Server-Zertifikats für den jeweiligen Virtualisierungsserver,language=Bash,label=servercert]{servercert}
+\begin{lstlisting}[caption=Erstellung des Server-Zertifikats für den jeweiligen Virtualisierungsserver (servercert.sh),language=Bash,label=servercert]{servercert}
 certtool --generate-privkey > "$tempdir/serverkey.pem"
 certtool --generate-certificate --load-privkey "$tempdir/serverkey.pem" \
   --load-ca-certificate /etc/pki/CA/cacert.pem --load-ca-privkey /etc/pki/CA/private/cakey.pem \
@@ -129,7 +129,7 @@ Für den Zweck der Verteilung, kommt in dieser Arbeit \textit{deluge} als BitTor
 
 Zunächst wählt der Benutzer einen Virtualisierungshost aus, der die zu verteilende virtuelle Maschine beherbergt. Die Virtualisierungshosts werden aus der zuvor abgelegten Klartextdatei ausgelesen (siehe Listing \ref{vhostlist}).
 \\
-\begin{lstlisting}[caption=Auslesen der registrierten Virtualisierungshosts,language=Python,label=vhostlist]{vhostlist}
+\begin{lstlisting}[caption=Auslesen der registrierten Virtualisierungshosts (cow.py),language=Python,label=vhostlist]{vhostlist}
 def hostList():
 	hostList = []
 	hosts = open(os.path.expanduser('~/.cow/vhosts'), 'r').readlines()
@@ -142,7 +142,7 @@ def hostList():
 
 Die Funktion für die Auswahl lässt den Benutzer zwischen allen ausgeschalteten virtuellen Maschinen auswählen. Diese werden wie im folgenden Listing \ref{vmlist} über die Virtualisierungs-API abgerufen.
 \\
-\begin{lstlisting}[caption=Abruf der ausgeschalteten virtuellen Maschine mit libvirt,language=Python, label=vmlist]{vmlist}
+\begin{lstlisting}[caption=Abruf der ausgeschalteten virtuellen Maschine mit libvirt (cow.py),language=Python, label=vmlist]{vmlist}
 def vmOffList(hostName, vType):
 	vOffList = []
 	if vType == 'xen':
@@ -157,7 +157,7 @@ def vmOffList(hostName, vType):
 \end{lstlisting}
 Außerdem gibt der Benutzer an, auf welche Virtualisierungsserver die virtuelle Maschine verteilt werden soll. Nach der Auswahl der Server und der VM erstellt das Skript \lstinline|maketorrent.py| (siehe Listing \ref{mktorrent}) eine Torrent-Datei aus der XML-Beschreibung von libvirt und den virtuellen Festplatten. Sie wird an alle ausgewählten Virtualisierungsserver mit rsync weitergegeben. 
 \\
-\begin{lstlisting}[caption=Erstellen der Torrent-Datei,language=Python, label=mktorrent]{mktorrent}
+\begin{lstlisting}[caption=Erstellen der Torrent-Datei (maketorrent.py),language=Python, label=mktorrent]{mktorrent}
 command = ['mktorrent', '-a', config.ip, '-o' , torrentFileName, torrentDir]
 execute(command)
 \end{lstlisting}
@@ -170,14 +170,14 @@ Für das Klonen der virtuellen Maschinen werden die von den Virtualisierungstech
 
 Beim Klonen einer virtuellen Maschine wählt der Benutzer, wie bei der Verteilung, einen Virtualisierungs-Host und eine virtuelle Maschine aus. Zusätzlich dazu wird die Anzahl der Klone und die Option alle Klone sofort zu starten abgefragt. Nach den erfolgten Benutzereingaben ruft das Verwaltungsprogramm das auf dem Virtualisierungsserver befindliche Skript \lstinline|clone.py| zum Klonen auf.
 \\
-\begin{lstlisting}[caption=Starten des Klonvorgangs,language=Python,label=clonestart]{clonestart}
+\begin{lstlisting}[caption=Starten des Klonvorgangs (cow.py),language=Python,label=clonestart]{clonestart}
 command = ['ssh', 'root@' + hostName, binDir + '/clone.py ' + vm.name() + ' ' + cloneCount + ' ' + autostart + ' ' + str(debug)]
 stdout, stderr = execute(command)
 \end{lstlisting}
 
 Im ersten Schritt des Klonvorgangs generiert das Skript einen neuen Namen (siehe Listing \ref{vmname}). Der Name setzt sich aus dem alten Namen und 6 zufälligen und Buchstaben zusammen.
 \\
-\begin{lstlisting}[caption=Erstellen des Namens der VM,language=Python, label=vmname]{vmname}
+\begin{lstlisting}[caption=Erstellen des Namens der VM (clone.py),language=Python, label=vmname]{vmname}
 def randomName(vmName):
 	length = len(vmName) + 6
 	chars = string.letters+string.digits
@@ -189,7 +189,7 @@ def randomName(vmName):
 
 Der nächste Schritt ist es die Beschreibung der Vorlage aus libvirt zu laden. Aus ihr werden die Festplatten der Vorlage ausgelesen und geklont. Wie in dem folgenden Listing \ref{clonevm} gezeigt wird, gibt es unterschiedliche Klon-Funktionen für Xen und KVM. Sie rufen die Klonwerkzeuge der jeweiligen Virtualisierungstechnik auf.
 \\
-\begin{lstlisting}[caption=VM-Auswahl,language=Python, label=clonevm]{clonevm}
+\begin{lstlisting}[caption=Klonfunktionen für Xen und KVM (clone.py),language=Python, label=clonevm]{clonevm}
  def cloneHddKvm(hdd, newHddPath):
 	command = ['kvm-img', 'info' , hdd]
 	baseFormat = re.search('file format: (?P<format>[\S]*)', execute(command)).groupdict()['format']
