@@ -4,7 +4,7 @@ Der Copy-on-Write-Mechanismus benötigt immer eine Vorlage - das Masterimage. Um
 Die Verteilungslösungen werden darauf überprüft, wie störanfällig sie sind. Ein anderer Punkt für die Entscheidungsfindung ist die benötigte Dauer der Verteilung. Außerdem wird einbezogen, wie skalierbar die Lösungen sind.
 
 \section{Multicast}
-Ein Multicast ist eine Mehrpunktverbindung. Der Sender schickt die Daten gleichzeitig an mehrere Empfänger. Durch das einmalige Senden an mehrere Empfänger wird Bandbreite eingespart. Die Daten werden nur an Rechner im Netz versendet, die diese auch angefordert haben, wie in Abbildung \ref{pic:multicast} schematisch dargestellt. Die Ausnahme bilden Switches, die Multicasting nicht unterstützen, sie versenden die gesendeten Daten an alle damit verbundenen Netzwerkknoten \cite{multicasttech}. 
+Ein Multicast ist eine Mehrpunktverbindung. Der Sender schickt die Daten gleichzeitig an mehrere Empfänger. Durch das einmalige Senden an mehrere Empfänger wird Bandbreite eingespart. Die Daten werden nur an Rechner im Netz versendet, die diese auch angefordert haben, wie in Abbildung \ref{pic:multicast} schematisch dargestellt. Die Ausnahme bilden Switches, die Multicasting nicht unterstützen, sie versenden die gesendeten Daten an alle damit verbundenen Netzwerkknoten \cite{Multicasttech}. 
 
 Da es bei den Masterimages darauf ankommt, dass sie komplett und fehlerfrei dupliziert werden, kann der Sender maximal so schnell senden, wie es der langsamste Empfänger entgegen nehmen kann.  Dadurch ist die Verwendung von Multicast, in einer heterogenen Umgebung mit einem langsamen oder weit entfernten Empfänger, sehr ineffizient. Anwendung findet Multicast heute vor allem bei der Verteilung von Multimediadaten \cite{multicastfefe}. 
 
@@ -42,7 +42,7 @@ Die zu übertragenden Daten werden nicht komplett in einem Stück übermittelt, 
 \end{itemize}
 
 \section{Netzwerkprotokoll NFS}
-NFS (Network File System) ist ein Protokoll für das Bereitstellen von Daten über das Netzwerk. Im Gegensatz zu den beiden vorher genannten Technologien stellt das Bereitstellen einen großen Unterschied dar. Die Daten werden nicht von einem Rechner auf den anderen kopiert, sondern über das Netzwerk wie eine lokale Festplatte zur Verfügung gestellt \cite{nfsspec}. Der Server macht hierbei eine Freigabe, die von dem Clientrechner ``gemountet'' wird \cite{nfslinux}. Die vom Clientrechner gemountete Freigabe wird in den Verzeichnisbaum eingebunden und kann wie lokales Verzeichnis angesteuert werden.
+NFS (Network File System) ist ein Protokoll für das Bereitstellen von Daten über das Netzwerk. Im Gegensatz zu den beiden vorher genannten Technologien stellt das Bereitstellen einen großen Unterschied dar. Die Daten werden nicht von einem Rechner auf den anderen kopiert, sondern über das Netzwerk wie eine lokale Festplatte zur Verfügung gestellt \cite{Nfsspec}. Der Server macht hierbei eine Freigabe, die von dem Clientrechner ``gemountet'' wird \cite{nfslinux}. Die vom Clientrechner gemountete Freigabe wird in den Verzeichnisbaum eingebunden und kann wie lokales Verzeichnis angesteuert werden.
 
 \bild{nfs}{NFS Beispiel}{pic:nfs}{375px}
 
