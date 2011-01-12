@@ -62,11 +62,8 @@ def cloneVm(vmName, vType):
 		conn = libvirt.open('qemu:///system')
 	vm = conn.lookupByName(vmName)
 
-	#xmlFile = open(torrentDir + '/' + vmName + '.xml', 'w')
-	#xmlFile = open('/tmp/' + vmName + '.xml', 'w')
 	newVmXml = prepareXml(vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
-	#save a temp copy, perhaps for debugging :)
-	#newVmXml.writexml(xmlFile)
+	
 	#define the new VM in libvirt
 	vm = conn.defineXML(newVmXml.toxml())
 	if autostart:
@@ -114,6 +111,6 @@ if len(sys.argv) == 5:
 		startTimeClone = time.time()
 		newVmName = randomName(vmName)
 		cloneVm(vmName, config.vType)
-		print 'Klon ' + str(i) + ': ' + newVmName
+		print 'Klon ' + str(i) + ': ' + newVmName + ' erstellt in ' + str(time.time() - startTimeClone) + " s"
 		debugOut('Time needed: ' + str(time.time() - startTimeClone) , 1)
 	debugOut('Overall Time needed: ' + str(time.time() - startTimeSkript), 1)

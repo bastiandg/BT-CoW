@@ -1,6 +1,6 @@
 #!/bin/bash
 
-host=$1
+host="$1"
 date="$(date +%s)"
 tempdir="/tmp/catemplate$date"
 mkdir -p "$tempdir"
@@ -11,8 +11,8 @@ certtool --generate-certificate --load-privkey "$tempdir/clientkey.pem" \
   --load-ca-certificate /etc/pki/CA/cacert.pem --load-ca-privkey /etc/pki/CA/private/cakey.pem \
   --template "$tempdir/client.info" --outfile "$tempdir/clientcert.pem"
 
-ssh "root@$host" "mkdir -p /etc/pki/libvirt/private/"
-rsync "$tempdir/clientkey.pem" "root@$host:/etc/pki/libvirt/private/clientkey.pem"
-rsync "$tempdir/clientcert.pem" "root@$host:/etc/pki/libvirt/clientcert.pem"
+mkdir -p /etc/pki/libvirt/private/
+mv "$tempdir/clientkey.pem" "/etc/pki/libvirt/private/clientkey.pem"
+mv "$tempdir/clientcert.pem" "/etc/pki/libvirt/clientcert.pem"
 
 rm -rf "$tempdir"

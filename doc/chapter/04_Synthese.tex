@@ -105,7 +105,7 @@ command = ['ssh', 'root@' + hostName, '/opt/cow/packageinstall.py "deluged delug
 execute(command)
 \end{lstlisting}
 
-Für die Abfrage über das Netzwerk verwendet libvirt X.509-Zertifikate. Es gibt drei unterschiedliche Zertifikate. Das Server-Zertifikat dient dazu die Echtheit des Virtualisierungsservers zu validieren. Das Client-Zertifikat wird von dem Server dazu verwendet, den Client zu authentifizieren und ihm dann Zugriff zu gewähren. Das CA-Zertifikat wird benötigt um die anderen beiden Zertifikate zu generieren und zu signieren.
+Für die Abfrage über das Netzwerk verwendet libvirt X.509-Zertifikate. Es gibt drei unterschiedliche Zertifikate. Das Server-Zertifikat dient dazu die Echtheit des Virtualisierungsservers zu validieren. Das Client-Zertifikat wird von dem Server dazu verwendet, den Client zu authentifizieren und ihm dann Zugriff zu gewähren. Das CA-Zertifikat wird benötigt um das Server-Zertifikat und das Client-Zertifikat zu generieren und zu signieren.
 
 In der Implementierung wird das Server-Zertifikat für den Virtualisierungsserver auf dem Verwaltungsserver generiert. Aus Gründen der Einfachheit wird es vom Verwaltungsserver generiert, in der Regel generiert sonst jeder Server sein eigenes Zertifikat. Nach der Erstellung wird das Server-Zertifikat, wie in Listing \ref{servercert} zu sehen, auf dem Virtualisierungsserver abgelegt. (\textbf{Hinweis:} Dies ist nur eine vereinfachte Darstellung des Zertifikate-Infrastruktur. Eine ausführliche Beschreibung ist unter \cite{libvirttls} zu finden.)
 \\

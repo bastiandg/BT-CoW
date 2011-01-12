@@ -17,7 +17,7 @@ Da es bei den Masterimages darauf ankommt, dass sie komplett und fehlerfrei dupl
 
 \textbf{Nachteile}
 \begin{itemize}
- \item Hohe Netzwerklast ährend der Verteilung
+ \item Hohe Netzwerklast während der Verteilung
 %  \item schlechte Skalierbarkeit
  \item Geschwindigkeitseinbruch bei heterogener Umgebung oder schlechten Netzanbindungen
 \end{itemize}
@@ -38,11 +38,11 @@ Die zu übertragenden Daten werden nicht komplett in einem Stück übermittelt, 
 
 \textbf{Nachteile}
 \begin{itemize}
-  \item verringerte Geschwindigkeit bei asymmetrischer Upload- und Downloadrate
+  \item verringerte Geschwindigkeit bei asymmetrischer Upload- und Downloadgeschwindigkeit
 \end{itemize}
 
 \section{Netzwerkprotokoll NFS}
-NFS (Network File System) ist ein Protokoll für das Bereitstellen von Daten über das Netzwerk. Im Gegensatz zu den beiden vorher genannten Technologien stellt dieses einen großen Unterschied dar. Die Daten werden nicht von einem Rechner auf den anderen kopiert, sondern über das Netzwerk wie eine lokale Festplatte zur Verfügung gestellt \cite{nfsspec}. Der Server macht hierbei eine Freigabe, die von dem Clientrechner ``gemountet'' wird \cite{nfslinux}. Die vom Clientrechner gemountete Freigabe wird in den Verzeichnisbaum eingebunden und kann wie lokales Verzeichnis angesteuert werden.
+NFS (Network File System) ist ein Protokoll für das Bereitstellen von Daten über das Netzwerk. Im Gegensatz zu den beiden vorher genannten Technologien stellt das Bereitstellen einen großen Unterschied dar. Die Daten werden nicht von einem Rechner auf den anderen kopiert, sondern über das Netzwerk wie eine lokale Festplatte zur Verfügung gestellt \cite{nfsspec}. Der Server macht hierbei eine Freigabe, die von dem Clientrechner ``gemountet'' wird \cite{nfslinux}. Die vom Clientrechner gemountete Freigabe wird in den Verzeichnisbaum eingebunden und kann wie lokales Verzeichnis angesteuert werden.
 
 \bild{nfs}{NFS Beispiel}{pic:nfs}{375px}
 
@@ -53,7 +53,7 @@ NFS (Network File System) ist ein Protokoll für das Bereitstellen von Daten üb
 
 \textbf{Nachteile}
 \begin{itemize}
- \item Schlechte Skalierbarkeit, da viele von einer NFS-Freigabe gestartete virtuelle Maschinen, können zu einer permanent hohen Netzwerklast führen
+ \item Schlechte Skalierbarkeit, da viele von einer NFS-Freigabe gestartete virtuelle Maschinen, zu einer permanent hohen Netzwerklast führen
  \item Keine Lastenverteilung
 \end{itemize}
 
@@ -65,7 +65,7 @@ Eine gute Skalierbarkeit zeichnet sich dadurch aus, dass der Aufwand nicht signi
 
 Der Aufwand der Verteilung per Multicast steigt bei einem zusätzlichem Empfänger nicht an. Jedoch wird die Übertragung erheblich langsamer, wenn der zusätzliche Empfänger eine langsame Verbindung zu dem Server hat. 
 
-Der dezentrale Aufbau des BitTorrent-Netzes macht es sehr skalierbar. Jeder zusätzliche Empfänger des Masterimages, wird auch gleichzeitig zu einem Sender. Wenn die Upload- und die Downloadrate bei einem zusätzlichen Peer gleich hoch sind, wird das Netz dadurch theoretisch also nicht langsamer. Das BitTorrent-Netz profitiert sogar von zusätzlichen Peers, da sie die Störanfälligkeit des Netzes verringern \cite{btscalability}.
+Der dezentrale Aufbau des BitTorrent-Netzes macht es sehr skalierbar. Jeder zusätzliche Empfänger des Masterimages, wird auch gleichzeitig zu einem Sender. Wenn die Upload- und die Downloadgeschwindigkeit bei einem zusätzlichen Peer gleich hoch sind, wird das Netz dadurch theoretisch also nicht langsamer. Das BitTorrent-Netz profitiert sogar von zusätzlichen Peers, da sie die Störanfälligkeit des Netzes verringern \cite{btscalability}.
 
 \subsection{Störanfälligkeit}
 Hier wird verglichen, wie sich der Ausfall eines Netzwerkknotens auf die Verteilung auswirken. BitTorrent ist besonders unanfällig gegen Ausfälle im Netz. Dieses wird durch die dezentrale Struktur ermöglicht. Wenn ein einzelner Netzwerkknoten ausfällt, besteht trotzdem unter den noch verfügbaren Knoten ein Netz. 
