@@ -5,13 +5,13 @@ In dem folgenden Kapitel werden Schlussfolgerungen über die erzielten Ergebniss
 Es konnte mit objektiven Analysemethoden gezeigt werden, dass qcow2 und BitTorrent die geeignetsten Technologien für das schnelle Replizieren und Verteilen von virtuellen Maschinen sind. Mit der an die Analyse anschließenden Implementierung wurden diese so zur Verfügung gestellt, dass sie auch ohne Vorkenntnisse bedienbar sind. Außerdem wurde aufgezeigt, dass die analysierten Technologien praxistauglich sind.
 
 Das Imageformat VHD wird, im Gegensatz zu den beiden oben genannten Technologien, nur als Übergangslösung zum Einsatz kommen. Es ist zwar praxistauglich, jedoch hat es Performancenachteile im Vergleich zu qcow2. Der Schritt wurde notwendig, da es während der Xen-Entwicklung zu einer fragwürdigen Umstrukturierung kam. Die Umstrukturierung führt dazu, dass Xen bestimmte Imageformate wie qcow2 zur Zeit nicht unterstützt. Dieser Punkt und die Tatsache das Xen nicht ohne selbst eingespielte Patches fehlerfrei einsetzbar ist, führen zu dem Urteil, dass der Einsatz von Xen für den Zweck dieser Arbeit aktuell nicht zu empfehlen ist.
-
+{ \fontsize{11.9pt}{14.9pt}\selectfont
 Die entwickelte Softwarelösung ermöglicht das Replizieren und Verteilen. Somit erfüllt die Softwarelösung die gestellten Erwartungen, virtuelle Maschinen schnell zu Klonen und über das Netzwerk zu verteilen. Hierbei war der Einsatz von bereits vorhandener Open Source Software sehr hilfreich. Ohne die eingebundene freie Software wäre dieses Projekt zeitlich nicht in dem Rahmen dieser Arbeit realisierbar gewesen.
 
 In dieser Arbeit wird der wichtige Punkt deutlich, dass bei einer Softwareentwicklung nicht immer das Rad neu erfunden werden muss. Dieses gilt vor allem im Bereich von Open Source. Hier gibt es bereits sehr viele freie Bibliotheken und Programme für alle Themengebiete. Sie können problemlos in einer Eigenentwicklung verwendet und eingebunden werden. Trotz der nicht vorhandenen Lizenzkosten, ist Open Source Software in der Regel nicht funktionell eingeschränkter oder langsamer als proprietärer Software.
 
 \section{Ausblick}
 % Für die weitere Entwicklung wäre es möglich ein Benutzerkonzept einzuführen, bei dem jede virtuelle Maschine einem Benutzer zugeordnet ist. 
-Für die weitere Entwicklung wäre es möglich die Bedienung für den Benutzer durch eine grafische Oberfläche zu vereinfachen. Hierfür könnte das grafische QT eingesetzt werden, dass auch Bibliotheken für die in der Implementierung verwendete Sprache Python bereitstellt.
+Für die weitere Entwicklung wäre es möglich die Bedienung für den Benutzer durch eine grafische Oberfläche zu vereinfachen. Hierfür könnte das grafische QT eingesetzt werden, dass auch Bibliotheken für die in der Implementierung verwendete Sprache Python bereitstellt. }
 
 Eine andere denkbare Weiterentwicklung wäre die Integration in libvirt. Hierbei könnten dann direkt Klone mit der Virtualisierungs-API erstellt werden.

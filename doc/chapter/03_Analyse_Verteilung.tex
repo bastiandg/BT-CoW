@@ -1,10 +1,11 @@
-\chapter{Analyse Verteilung von Images}\label{verteilung}
+
+\chapter{Analyse Verteilung von Images}\label{verteilung}{ \fontsize{11.8pt}{13.2pt}\selectfont
 Der Copy-on-Write-Mechanismus benötigt immer eine Vorlage - das Masterimage. Um es auf mehreren Virtualisierungsservern nutzen zu können, muss es über das Netzwerk verteilt werden oder über ein gemeinsam genutztes Storage-Backend zur Verfügung gestellt werden. Dieses Kapitel soll Wege aufzeigen, diese Verteilung oder Bereitstellung möglichst effizient vorzunehmen.
 
 Die Verteilungslösungen werden darauf überprüft, wie störanfällig sie sind. Ein anderer Punkt für die Entscheidungsfindung ist die benötigte Dauer der Verteilung. Außerdem wird einbezogen, wie skalierbar die Lösungen sind.
 
 \section{Multicast}
-Ein Multicast ist eine Mehrpunktverbindung. Der Sender schickt die Daten gleichzeitig an mehrere Empfänger. Durch das einmalige Senden an mehrere Empfänger wird Bandbreite eingespart. Die Daten werden nur an Rechner im Netz versendet, die diese auch angefordert haben, wie in Abbildung \ref{pic:multicast} schematisch dargestellt. Die Ausnahme bilden Switches, die Multicasting nicht unterstützen, sie versenden die gesendeten Daten an alle damit verbundenen Netzwerkknoten \cite{Multicasttech}. 
+Ein Multicast ist eine Mehrpunktverbindung. Der Sender schickt die Daten gleichzeitig an mehrere Empfänger. Durch das einmalige Senden an mehrere Empfänger wird Bandbreite eingespart. Die Daten werden nur an Rechner im Netz versendet, die diese auch angefordert haben, wie in Abbildung \ref{pic:multicast} schematisch dargestellt. Die Ausnahme bilden Switches, die Multicasting nicht unterstützen. Sie versenden die gesendeten Daten an alle damit verbundenen Netzwerkknoten \cite{Multicasttech}.}
 
 Da es bei den Masterimages darauf ankommt, dass sie komplett und fehlerfrei dupliziert werden, kann der Sender maximal so schnell senden, wie es der langsamste Empfänger entgegen nehmen kann.  Dadurch ist die Verwendung von Multicast, in einer heterogenen Umgebung mit einem langsamen oder weit entfernten Empfänger, sehr ineffizient. Anwendung findet Multicast heute vor allem bei der Verteilung von Multimediadaten \cite{multicastfefe}. 
 
@@ -60,15 +61,16 @@ NFS (Network File System) ist ein Protokoll für das Bereitstellen von Daten üb
 \section{Vergleich}
 Im Folgenden werden die Verteilungsalternativen in Hinsicht auf die Kriterien Skalierbarkeit, Netzwerkausfall und Geschwindigkeit untersucht werden.
 
+{ \fontsize{12.4pt}{16pt}\selectfont
 \subsection{Skalierbarkeit}
 Eine gute Skalierbarkeit zeichnet sich dadurch aus, dass der Aufwand nicht signifikant ansteigt oder sich verlangsamt, wenn das Masterimage an einen weiteren Virtualisierungsserver (N+1) verteilt wird. NFS zeigt dabei eine Schwäche, die Last steigt des NFS-Servers stetig mit jedem neuen NFS-Client linear an \cite{nfsharmful}. 
 
 Der Aufwand der Verteilung per Multicast steigt bei einem zusätzlichem Empfänger nicht an. Jedoch wird die Übertragung erheblich langsamer, wenn der zusätzliche Empfänger eine langsame Verbindung zu dem Server hat. 
 
-Der dezentrale Aufbau des BitTorrent-Netzes macht es sehr skalierbar. Jeder zusätzliche Empfänger des Masterimages, wird auch gleichzeitig zu einem Sender. Wenn die Upload- und die Downloadgeschwindigkeit bei einem zusätzlichen Peer gleich hoch sind, wird das Netz dadurch theoretisch also nicht langsamer. Das BitTorrent-Netz profitiert sogar von zusätzlichen Peers, da sie die Störanfälligkeit des Netzes verringern \cite{btscalability}.
+Der dezentrale Aufbau des BitTorrent-Netzes macht es sehr skalierbar. Jeder zusätzliche Empfänger des Masterimages, wird auch gleichzeitig zu einem Sender. Wenn die Upload- und die Downloadgeschwindigkeit bei einem zusätzlichen Peer gleich hoch sind, wird das Netz dadurch theoretisch also nicht langsamer. Das BitTorrent-Netz profitiert sogar von zusätzlichen Peers, da sie die Störanfälligkeit des Netzes verringern \cite{btscalability}. 
 
 \subsection{Störanfälligkeit}
-Hier wird verglichen, wie sich der Ausfall eines Netzwerkknotens auf die Verteilung auswirken. BitTorrent ist besonders unanfällig gegen Ausfälle im Netz. Dieses wird durch die dezentrale Struktur ermöglicht. Wenn ein einzelner Netzwerkknoten ausfällt, besteht trotzdem unter den noch verfügbaren Knoten ein Netz. 
+Hier wird verglichen, wie sich der Ausfall eines Netzwerkknotens auf die Verteilung auswirken. BitTorrent ist besonders unanfällig gegen Ausfälle im Netz. Dieses wird durch die dezentrale Struktur ermöglicht. Wenn ein einzelner Netzwerkknoten ausfällt, besteht trotzdem unter den noch verfügbaren Knoten ein Netz. }
 \bild{bittorrent_ausfall}{Bittorrent Netzwerkausfall}{pic:bittorrent_ausfall}{375px}
 
 NFS und Multicast haben im Unterschied zu BitTorrent einen großen Nachteil, da die Verteilung über einen einzigen Knoten stattfindet. Der Ausfall eines bestimmten Knotens führt also zum kompletten Abbruch der Verteilung. Man nennt diesen Punkt \textit{Single Point of Failure}. 

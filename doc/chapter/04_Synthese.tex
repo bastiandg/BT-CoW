@@ -27,7 +27,7 @@ Nicht jeder Virtualisierungsserver kann das Verteilen initiieren, sondern nur da
 Das Klonen wird, wie auch die Verteilung, von dem zentralen Verwaltungsserver initiiert. Für das eigentliche Klonen der virtuellen Festplatten werden die in den Virtualisierungstechniken integrierten Programme eingesetzt. 
 
 \section{Implementierung}
-In diesem Unterkapitel werden die oben genannten Punkte aufgegriffen und deren Umsetzung beschrieben. Im einzelnen wird hier auf die Punkte wie die Verwaltung der virtuellen Maschinen, das Klonen und die Verteilung eingegangen. Eine Auflistung der entwickelten Skripte findet sich im Anhang (siehe Kapitel \ref{skripte}).
+In diesem Unterkapitel werden die oben genannten Punkte aufgegriffen und deren Umsetzung beschrieben. Im Einzelnen wird hier auf die Punkte wie die Verwaltung der virtuellen Maschinen, das Klonen und die Verteilung eingegangen. Eine Auflistung der entwickelten Skripte findet sich im Anhang (siehe Kapitel \ref{skripte}).
 
 \subsection{Rahmenbedingungen}
 Die Verwaltungslösung wird auf einem Debian squeeze System implementiert. In der Implementierung werden ein paar wenige debianspezifische Befehle wie zum Beispiel \textit{apt-get} verwendet. Diese können aber leicht für andere Linux-Distributionen portiert werden. Neben der oben genannten Software kommen ssh und rsync zum Einsatz.
@@ -80,8 +80,10 @@ Die einzelnen Aufgaben wie das Verteilen und das Klonen werden auf den Virtualis
 \subsection{Einrichtung eines Virtualisierungshosts}\label{einrichtung}
 Die Einrichtung wird durchgeführt, um auf allen verwalteten Virtualisierungshosts die Grundvoraussetzungen für das Klonen und Verteilen zu schaffen. Während der Einrichtung wird die nötige Software installiert und es werden Einstellungen vorgenommen. Sie ermöglichen das einfache Kopieren und Klonen von virtuellen Maschinen. Der Ablauf der Einrichtung wird im Folgenden dargelegt. 
 
+
 \textbf{Ablauf}
 
+{ \fontsize{12.1pt}{16pt}\selectfont
 Der Benutzer gibt zunächst die IP-Adresse des Virtualisierungshosts an. Ebenfalls wird die Virtualisierungstechnik des neuen Hosts abgefragt. Nach der Eingabe wird über die IP-Adresse der Rechnername erfragt. Für die einfache Kommunikation wird der ssh-key des Verwaltungsservers auf dem zu verwaltenden Virtualisierungshost hinzugefügt (siehe Listing \ref{hostname}).
 \\
 \begin{lstlisting}[caption=Abruf des Rechnernamens und Kopieren des ssh-keys (hostname.sh),language=Bash,label=hostname]{hostname}
@@ -98,16 +100,16 @@ command = ['rsync', '-r', 'client-scripts/' ,'root@' + hostName + ':' + binDir]
 execute(command)
 \end{lstlisting}
 
-Im Anschluss folgt die Installation der benötigten Software-Pakete. Es werden die Pakete für libvirt, deluge (siehe Kapitel \ref{verteilung}), sowie für administrative Tools installiert, wie das Listing \ref{clientscripts} zeigt. 
+Im Anschluss folgt die Installation der benötigten Software-Pakete. Es werden die Pakete für libvirt, deluge (siehe Kapitel \ref{verteilung}), sowie für administrative Tools installiert, wie das Listing \ref{clientscripts} zeigt. }
 \\
 \begin{lstlisting}[caption=Paketinstallation auf dem Virtualisierungsserver (cow.py),language=Python,label=packageinstall]{packageinstall}
 command = ['ssh', 'root@' + hostName, '/opt/cow/packageinstall.py "deluged deluge-console mktorrent libvirt-bin python-libvirt"' ]
 execute(command)
 \end{lstlisting}
-
+{ \fontsize{12.3pt}{16.8pt}\selectfont
 Für die Abfrage über das Netzwerk verwendet libvirt X.509-Zertifikate. Es gibt drei unterschiedliche Zertifikate. Das Server-Zertifikat dient dazu die Echtheit des Virtualisierungsservers zu validieren. Das Client-Zertifikat wird von dem Server dazu verwendet, den Client zu authentifizieren und ihm dann Zugriff zu gewähren. Das CA-Zertifikat wird benötigt um das Server-Zertifikat und das Client-Zertifikat zu generieren und zu signieren.
 
-In der Implementierung wird das Server-Zertifikat für den Virtualisierungsserver auf dem Verwaltungsserver generiert. Aus Gründen der Einfachheit wird es vom Verwaltungsserver generiert, in der Regel generiert sonst jeder Server sein eigenes Zertifikat. Nach der Erstellung wird das Server-Zertifikat, wie in Listing \ref{servercert} zu sehen, auf dem Virtualisierungsserver abgelegt. (\textbf{Hinweis:} Dies ist nur eine vereinfachte Darstellung des Zertifikate-Infrastruktur. Eine ausführliche Beschreibung ist unter \cite{Libvirttls} zu finden.)
+In der Implementierung wird das Server-Zertifikat für den Virtualisierungsserver auf dem Verwaltungsserver generiert. Aus Gründen der Einfachheit wird es vom Verwaltungsserver generiert, in der Regel generiert sonst jeder Server sein eigenes Zertifikat. Nach der Erstellung wird das Server-Zertifikat, wie in Listing \ref{servercert} zu sehen, auf dem Virtualisierungsserver abgelegt. (\textbf{Hinweis:} Dies ist nur eine vereinfachte Darstellung des Zertifikate-Infrastruktur. Eine ausführliche Beschreibung ist unter \cite{Libvirttls} zu finden.) }
 \\
 \begin{lstlisting}[caption=Erstellung des Server-Zertifikats für den jeweiligen Virtualisierungsserver (servercert.sh),language=Bash,label=servercert]{servercert}
 certtool --generate-privkey > "$tempdir/serverkey.pem"
@@ -175,7 +177,7 @@ command = ['ssh', 'root@' + hostName, binDir + '/clone.py ' + vm.name() + ' ' + 
 stdout, stderr = execute(command)
 \end{lstlisting}
 
-Im ersten Schritt des Klonvorgangs generiert das Skript einen neuen Namen (siehe Listing \ref{vmname}). Der Name setzt sich aus dem alten Namen und 6 zufälligen und Buchstaben zusammen.
+Im ersten Schritt des Klonvorgangs generiert das Skript einen neuen Namen (siehe Listing \ref{vmname}). Der Name setzt sich aus dem alten Namen und sechs zufälligen und Buchstaben zusammen.
 \\
 \begin{lstlisting}[caption=Erstellen des Namens der VM (clone.py),language=Python, label=vmname]{vmname}
 def randomName(vmName):
@@ -238,4 +240,4 @@ Die Softwarelösung unterscheidet grundsätzlich zwischen zwei unterschiedlichen
 
 \bild{Kommunikation}{Kommunikation}{pic:kommunikation}{375px}
 
-Die aufwendigeren Aktionen wie das Klonen und erstellen der Torrent-Datei werden nicht über das Netzwerk vom Virtualisierungsserver erledigt. Statt dessen sind sie in Skripte auf den Virtualisierungsservern ausgelagert. Der Verwaltungsserver übernimmt das sammeln der Parameter und übergibt sie den lokalen Skripten auf den Virtualisierungsservern beim Starten per ssh.
+Die aufwendigeren Aktionen wie das Klonen und erstellen der Torrent-Datei werden nicht über das Netzwerk vom Virtualisierungsserver erledigt. Stattdessen sind sie in Skripte auf den Virtualisierungsservern ausgelagert. Der Verwaltungsserver übernimmt das sammeln der Parameter und übergibt sie den lokalen Skripten auf den Virtualisierungsservern beim Starten per ssh.
