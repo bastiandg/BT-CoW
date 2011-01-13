@@ -3,7 +3,7 @@ Für das Erstellen mehrerer gleichartiger virtueller Maschinen benötigt man meh
 
 Die Copy-on-Write-Strategie wird von Unix-artigen Betriebssystemen verwendet, um Arbeitsspeicher einzusparen. Sie wird eingesetzt, um nicht den ganzen Speicherbereich eines ``geforkten'' Prozesses kopieren zu müssen \cite{linuxcow}. Die Vorteile der Optimierungsstrategie zeigen sich jedoch auch bei der Speicherung virtueller Festplatten.
 
-Wie in Abbildung \ref{pic:cow} schematisch dargestellt ist, wird bei Copy-on-Write nicht das gesamte Image kopiert. Es werden in dem Copy-on-Write-Image nur die Veränderungen gegenüber dem so genannten Master- oder Quellimage gespeichert. Für die Platzersparnis werden Sparse-Dateien genutzt, welche im Folgenden erklärt werden. Außerdem werden die unterschiedlichen Verfahren zur Verwendung von Copy-on-Write erläutert und analysiert.
+Wie in Abbildung \ref{pic:cow} schematisch dargestellt ist, wird bei Copy-on-Write nicht das gesamte Image kopiert. Es werden in dem Copy-on-Write-Image nur die Veränderungen gegenüber dem so genannten Master- oder Quell-image gespeichert. Für die Platzersparnis werden Sparse-Dateien genutzt, welche im Folgenden erklärt werden. Außerdem werden die unterschiedlichen Verfahren zur Verwendung von Copy-on-Write erläutert und analysiert.
 \bild{copyonwrite}{Copy-on-Write}{pic:cow}{375px}
 {\fontsize{11.9pt}{14pt}\selectfont
 \section{Sparse-Dateien}
