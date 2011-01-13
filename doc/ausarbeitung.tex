@@ -141,14 +141,40 @@ morecomment=[l][\color{darkblue}]{rename},
 }
 
 \maketitle
+\newpage
+\chapter*{Erklärung}
 
+Soweit meine Rechte berührt sind, erkläre ich mich einverstanden, dass die Bachelor-Arbeit Angehörigen der Hochschule Emden/Leer für Studium / Lehre / Forschung uneingeschränkt zugänglich gemacht werden kann. 
+
+Hiermit erkläre ich an Eides statt, dass ich die vorliegende Bachelor-Arbeit bis auf die offizielle Betreuung selbst und ohne fremde Hilfe angefertigt habe und die benutzten Quellen und Hilfsmittel vollständig angegeben sind.
+\\\\\\
+Bremen, \date{\today}
+\\\\\\
+Bastian de Groot
+\newpage
+\chapter*{Danksagung}
+Zunächst geht mein Dank an das Unternehmen \textbf{Univention}, das mich unterstützt hat und mir während der Erstellung der Bachelor-Thesis Virtualisierungshardware zur Verfügung stellte.
+
+Besonders danke ich allen Mitarbeitern von Univention für die sehr gute Zusammenarbeit und das angenehme Arbeitsklima. Hierbei möchte ich mich besonders bei meinem Betreuer \textbf{Arvid Requate} bedanken, für die hervorragende Unterstützung während dieser Arbeit. Ebenfalls danke ich \textbf{Phillip Hahn} für die erkenntnisreiche Unterstützung in vielen fachlichen Fragen. Auch danke ich \textbf{Janek Walkenhorst}, mit dem ich mich nicht nur fachlich über viele Dinge ausgetauscht habe, sondern auch privat einen sehr guten Kontakt pflegte.
+
+Nicht zuletzt gilt mein tiefer Dank \textbf{meinen Eltern}, die mir mein Studium durch Ihre finanzielle Unterstützung ermöglicht haben und mir auch jederzeit in allen anderen Belangen mit Rat und Tat zur Seite standen.
+\\\\\\
+\begin{quote}\centering
+\textit{Es ist nicht Deine Schuld, dass die Welt ist, wie sie ist.\\
+Es wär nur Deine Schuld, wenn sie so bleibt.}\\
+\fontsize{9pt}{10pt}\selectfont - Die Ärzte - Deine Schuld -
+\end{quote}
+
+\newpage
 \tableofcontents
 \include{glossar}
 \include{chapter/01_Einleitung}
+% \addtocontents{toc}{\protect\newpage}
 \include{chapter/02_Analyse_CoW}
 \include{chapter/03_Analyse_Verteilung}
 \include{chapter/04_Synthese}
 \include{chapter/05_Zusammenfassung}
+\appendix
 \include{chapter/06_Anhang}
 \newpage
 %Glossar ausgeben

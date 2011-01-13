@@ -101,19 +101,19 @@ Die Testergebnisse werden in diesem Kapitel zusammenfassend aufgeführt und anal
 \bild{Iozone-kvm-8gb}{Performance-Testergebnisse von Iozone für KVM mit der Dateigröße 8gb}{pic:iozonekvm}{375px}
 Die Abbildung \ref{pic:iozonekvm} zeigt, dass mit KVM qcow2 gegenüber den anderen Copy-on-Write-Techniken einen Geschwindigkeitsvorteil beim sequentiellen Lesen und Schreiben hat. Insbesondere bei großen Blockgrößen zeigt sich dieser Vorteil. LVM-Snapshots und dm-Snapshots liegen hingegen ungefähr gleich auf.
 
-\bild{bonnie-kvm-random-seek}{Performance-Testergebnisse von bonnnie++ für KVM}{pic:bonniekvm}{375px}
+\bild{bonnie-kvm-random-seek}{Performance-Testergebnisse von bonnie++ für KVM}{pic:bonniekvm}{375px}
 Abbildung \ref{pic:bonniekvm} ist zu entnehmen, dass qcow2 wie auch bei den sequentiellen Tests vor LVM-Snapshots und dm-Snapshots liegt. Der Unterschied zu der echten Festplattenpartition ist in beiden Tests sehr gering. Die guten Werte von qcow2, sowohl beim sequentiellen als auch beim zufälligem Zugriff auf die Festplatte, hängen mit der guten Integration in KVM zusammen (siehe Kapitel \ref{KVM}).
 
 Beim sequentiellen Lesen und Schreiben in Xen schneiden die dm-Snapshots besser ab als LVM-Snapshots und VHD , wie in Abbildung \ref{pic:iozonexen} zu sehen ist. 
 \bild{Iozone-xen-8gb}{Performance-Testergebnisse von Iozone für Xen mit der Dateigröße 8gb}{pic:iozonexen}{375px}
 
 Bei zufälligem Zugriff auf die Festplatte unter Xen ist VHD langsamer als LVM-Snapshots und dm-Snapshots. Die LVM-Snapshots und dm-Snapshots haben eine ähnliche Geschwindigkeit und keine signifikanten Nachteile gegenüber der Festplattenpartition (siehe Abbildung \ref{pic:bonniexen}). Trotz der von Citrix für Xen eigens entwickelten VHD-Unterstützung, hat VHD nur ein mittelmäßiges Ergebnis erzielt \cite{citrixVHD}. 
-\bild{bonnie-xen-random-seek}{Performance-Testergebnisse von bonnnie++ Xen}{pic:bonniexen}{375px}
+\bild{bonnie-xen-random-seek}{Performance-Testergebnisse von bonnie++ Xen}{pic:bonniexen}{375px}
 
-Die Testergebnisse zeigen, dass es Geschwindigkeitsunterschiede zwischen den Copy-on-Write-Technniken gibt. Diese Unterschiede in der Geschwindigkeit sind aber nicht so groß, dass man einzelne Copy-on-Write-Lösungen aufgrund der Performance-Tests kategorisch ausschließen müsste. Dennoch sind besonders die Vorteile von qcow2 in Verbindung mit KVM zu erwähnen. Für Xen gibt es zur Zeit kein Image-Format (siehe Abbildung 2.5), dass ähnliche Testergebnisse wie qcow2 in Verbindung mit KVM (siehe Abbildung 2.4) vorweisen kann. 
+Die Testergebnisse zeigen, dass es Geschwindigkeitsunterschiede zwischen den Copy-on-Write-Techniken gibt. Diese Unterschiede in der Geschwindigkeit sind aber nicht so groß, dass man einzelne Copy-on-Write-Lösungen aufgrund der Performance-Tests kategorisch ausschließen müsste. Dennoch sind besonders die Vorteile von qcow2 in Verbindung mit KVM zu erwähnen. Für Xen gibt es zur Zeit kein Image-Format (siehe Abbildung 2.5), dass ähnliche Testergebnisse wie qcow2 in Verbindung mit KVM (siehe Abbildung 2.4) vorweisen kann. 
 
 \section{Fazit}
-Es gibt bei den Testergebnissen keine eindeutige Empfehlung für eine Copy-on-Write-Technik aufgrund der Geschwindigkeit. Im Großen und Ganzen fallen bei den Ergebnissen unter den einzelnen Copy-on-Write Verfahren Unterschiede auf, sie lassen jedoch keine eindeutige Entscheidung zu.
+Es gibt bei den Testergebnissen keine eindeutige Empfehlung für eine Copy-on-Write-Technik aufgrund der Geschwindigkeit. Im Großen und Ganzen fallen bei den Ergebnissen unter den einzelnen Copy-on-Write-Verfahren Unterschiede auf, sie lassen jedoch keine eindeutige Entscheidung zu.
 
 Aufgrund der unterschiedlichen Implementierungen der Copy-on-Write-Techniken in KVM und Xen, wird auch für die beiden Virtualisierungslösungen ein jeweiliges Fazit gezogen.
 
