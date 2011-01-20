@@ -1,4 +1,5 @@
 \documentclass{beamer}
+% \documentclass[handout]{beamer}
 \setbeamertemplate{navigation symbols}{}
 \usepackage{beamerthemeshadow}
 \usepackage[ngerman]{babel}	% Spracheinstellungen
@@ -15,6 +16,7 @@
 \definecolor{CodeGreen}{rgb}{0.0, 0.49, 0.08}
 \usepackage{listings}		% Code einbinden
 \usepackage{green}
+% \usepackage{blue}
 
 \setbeamertemplate{footline}
 {%
@@ -29,7 +31,7 @@
   \vskip0pt%
 }
 
- \titlegraphic{\includegraphics[width=0.3\columnwidth]{technik} \hskip0.5cm \includegraphics[width=0.35\columnwidth]{univentionkomplett}} 
+\titlegraphic{\includegraphics[width=0.3\columnwidth]{technik} \hskip0.5cm \includegraphics[width=0.3\columnwidth]{univentionkomplett}} 
 % 	Fachbereich Technik \\
 % 	Abteilung Elektrotechnik und Informatik
 % \setbeamertemplate{enumerate item}{\color{technikdunkel}\insertenumlabel.}
@@ -53,27 +55,266 @@
 \titlepage
 \end{frame} 
 
+\section{Virtualisierung}
+\begin{frame}
+\frametitle{(Betriebsystem-)Virtualisierung}
+\fontsize{15pt}{25pt} \selectfont
+\begin{itemize}
+ \item Verteilung von Hardwareressourcen auf virtuelle Maschinen \pause  %Betriebsystem-Instanzen
+ \item Virtuelle Maschinen stellen nachgebildete Rechner dar, die selbst (in der Regel) keinen Unterschied zu echter Hardware feststellen können
+\end{itemize}
+\end{frame}
+
 \section{Copy-on-Write}
+
 \begin{frame}
-\frametitle{Copy-on-Write} 
-Einführung
+\frametitle{Vorraussetzungen effizienter Speicherung}
+\fontsize{20pt}{25pt} \selectfont
+\begin{itemize}
+ \item Viele virtuelle Maschinen \pause
+ \item Große Ähnlichkeit untereinander 
+%  \item die virtuellen Maschinen sollen schnell verfügbar sein
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}
-\frametitle{Funktionsweise} 
+\frametitle{Virtualisierte Hardware} 
+\fontsize{20pt}{25pt} \selectfont
+\begin{itemize}
+ \only<1->{ \item \includegraphics[width=20px]{cpu} \hskip0.2cm Prozessor} 
+ \only<2->{ \item \includegraphics[width=20px]{festplatte} \hskip0.2cm Festplatte} 
+ \only<3->{ \item \includegraphics[width=20px]{cd} \hskip0.2cm CD-Laufwerk} 
+ \only<4->{ \item \includegraphics[width=20px]{monitor} \hskip0.2cm Monitor} 
+ \only<5->{ \item \includegraphics[width=20px]{maus} \hskip0.2cm Maus} 
+ \only<6->{ \item \includegraphics[width=20px]{tastatur} \hskip0.2cm Tastatur} 
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Kritische Hardware für die Speicherung} 
+\fontsize{20pt}{25pt} \selectfont
+\begin{itemize}
+ \only<1-1>{ \item \includegraphics[width=20px]{cpu} \hskip0.2cm Prozessor} 
+ \only<1-2>{ \item \includegraphics[width=20px]{festplatte} \hskip0.2cm Festplatte} 
+ \only<1-2>{ \item \includegraphics[width=20px]{cd} \hskip0.2cm CD-Laufwerk} 
+ \only<1-1>{ \item \includegraphics[width=20px]{monitor} \hskip0.2cm Monitor} 
+ \only<1-1>{ \item \includegraphics[width=20px]{maus} \hskip0.2cm Maus} 
+ \only<1-1>{ \item \includegraphics[width=20px]{tastatur} \hskip0.2cm Tastatur} 
+\end{itemize}
+%  \only<4>{\includegraphics[width=150px]{festplatte} \\ Festplatte}
+\end{frame}
+
+\begin{frame}
+\frametitle{Kritische Hardware für die Speicherung} 
+\begin{center}
+ \includegraphics[width=150px]{festplatte} \\ Festplatte
+\end{center}
 
 \end{frame}
+
+\begin{frame}
+\frametitle{Kritische Hardware für die Speicherung} 
+
+
+\begin{columns}
+\column{3.8cm} 
+\begin{center}
+ \includegraphics[width=100px]{festplatte} \\ Festplatte
+\end{center}
+\column{6cm} 
+\begin{block}{Speicherungsformen}
+ \begin{itemize}
+ \item Festplattenpartition \pause
+ \item Rohe Abbildungsdatei (Raw-Image) \pause
+ \item Viele Abbildungsformate der Virtualisierungstechnologien: vmdk, qcow2, vdi, vhd, ...
+ \end{itemize}
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Herkömmliche/schlechte Lösung} 
+\includegraphics<1->[height=100px]{copyonwrite1}
+\includegraphics<2->[height=100px]{copyonwrite2} 
+\includegraphics<3->[height=100px]{copyonwrite3}
+\end{frame}
+
+\begin{frame}
+\frametitle{Gute Lösung - Copy-on-Write} 
+\includegraphics<1->[height=100px]{copyonwrite_1}
+\includegraphics<2->[height=100px]{copyonwrite_2} 
+\includegraphics<3->[height=100px]{copyonwrite_3}
+\end{frame}
+
+\begin{frame}
+\frametitle{Gute Lösung - Copy-on-Write} 
+\includegraphics[height=100px]{copyonwrite_1}
+\includegraphics[height=100px]{copyonwrite_2} 
+\includegraphics[height=100px]{copyonwrite_3}
+\begin{center}
+\vskip0.3cm
+\includegraphics[width=60px]{Smilie}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Fazit Copy-on-Write}
+
+\begin{block}{Vorteile}
+ \begin{itemize}
+  \item Sehr schnelles Klonen von virtuellen Maschinen
+  \item Sehr effiziente Speicherung
+ \end{itemize}
+
+\end{block}
+
+\begin{alertblock}{Zu beachten}
+ \begin{itemize}
+  \item Inkompatibilitäten zwischen Copy-on-Write Imageformaten
+ \end{itemize}
+\end{alertblock}
+
+\end{frame}
+
 
 \section{Verteilung}
-
 \begin{frame}
-\frametitle{Vorhandene Lösungen} 
+\frametitle{Verteilung der Master-Images - Vorhandene Lösungen} 
+\fontsize{20pt}{30pt} \selectfont
 \begin{itemize}
-
  \item BitTorrent
  \item Multicast
  \item NFS
- 
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{Multicast} 
+\includegraphics[width=300px]{multicast}
+\end{frame}
+
+\begin{frame}
+\begin{columns}
+\column{3.8cm} 
+\frametitle{Multicast} 
+\includegraphics[width=120px]{multicast}
+\column{6cm} 
+\begin{block}{Vorteile}
+\begin{itemize}
+ \item Sehr hohe Geschwindigkeit durch Parallelität \pause
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Nachteile}
+\begin{itemize}
+ \item Hohe Netzwerklast während der Verteilung \pause
+ \item Geschwindigkeitseinbruch bei heterogener Umgebung oder schlechten Netzanbindungen
+\end{itemize}
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{NFS} 
+\includegraphics[width=300px]{nfs}
+\end{frame}
+
+\begin{frame}
+\begin{columns}
+\column{3.8cm} 
+\frametitle{NFS} 
+\includegraphics[width=120px]{nfs}
+\column{6cm} 
+\begin{block}{Vorteile}
+\begin{itemize}
+ \item Geringer Administrationsaufwand \pause
+ \item Sofortige Verfügbarkeit \pause
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Nachteile}
+\begin{itemize}
+ \item Permanent hohe Netzwerklast, bei mehreren gestarteten VMs \pause
+ \item Keine Lastenverteilung
+\end{itemize}
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{BitTorrent} 
+\includegraphics[width=300px]{bittorrent}
+\end{frame}
+
+\begin{frame}
+\frametitle{BitTorrent} 
+\begin{columns}
+\column{3.8cm} 
+\includegraphics[width=120px]{bittorrent}
+\column{6cm} 
+\begin{block}{Vorteile}
+\begin{itemize}
+ \item Hohe Skalierbarkeit \pause 
+%  \item Sehr effizient auch in heterogenen Umgebungen \pause
+ \item Hohe Ausfallsicherheit \pause
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Nachteile}
+\begin{itemize}
+  \item Leicht verringerte Geschwindigkeit bei asymmetrischer Upload- und Downloadgeschwindigkeit
+\end{itemize}
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Fazit} 
+\fontsize{20pt}{25pt} \selectfont
+\begin{itemize}
+  \item Multicast ungeeignet, da alle Daten ankommen müssen \pause
+  \item NFS ungeeignet, da es keine Lastenverteilung hat \pause
+  \item BitTorrent ist die beste Lösung
+\end{itemize}
+\end{frame}
+
+
+\section{Softwarelösung}
+
+\begin{frame}
+\frametitle{Softwarelösung} 
+\includegraphics[width=300px]{Kommunikation}
+
+\end{frame}
+
+\begin{frame}
+\begin{columns}
+\column{3.8cm} 
+\frametitle{Softwarelösung} 
+\includegraphics[width=120px]{Kommunikation}
+\column{6cm} 
+\begin{block}{Verwendungszweck}
+\begin{itemize}
+ \item Klonen virtueller Maschinen \pause
+ \item Verteilen von Master-Images im Netzwerk
+\end{itemize}
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Vorführung} 
+\begin{center}
+ \includegraphics[width=150px]{video} 
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ende}
+\fontsize{70pt}{70pt} \selectfont Fragen
+\end{frame}
+
 \end{document}

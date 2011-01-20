@@ -8,7 +8,6 @@ Die einzelnen Aufgaben der Verwaltungslösung werden nicht in einem einzigen Skr
 \subsection{Verwaltungsserver} 
 Die Skripte des Verwaltungsservers nehmen die Verwaltungs- und Einrichtungsaufgaben wahr. Ihre Aufgaben werden hier kurz erklärt.
 
-{ \fontsize{12.1pt}{16.2pt}\selectfont
 \textbf{cow.py}
 - Hauptprogramm der Verwaltungslösung: Es nimmt die Benutzereingaben entgegen und ruft die anderen Skripte auf.
 
@@ -22,7 +21,7 @@ Die Skripte des Verwaltungsservers nehmen die Verwaltungs- und Einrichtungsaufga
 - erstellt das CA-Zertifikat wenn es nicht vorhanden ist und überträgt den öffentlichen Schlüssel des CA-Zertifikats an den jeweiligen Virtualisierungsserver.
 
 \textbf{clientcert.sh}
-- erstellt ein Client-Zertifikat, dass dem Verwaltungsserver Zugriff auf die libvirt-Installationen der Virtualisierungsserver ermöglicht.}
+- erstellt ein Client-Zertifikat, dass dem Verwaltungsserver Zugriff auf die libvirt-Installationen der Virtualisierungsserver ermöglicht.
 
 \subsection{Virtualisierungsserver}
 Diese Skripte liegen auf den Virtualisierungsserven. Sie werden während der Einrichtung vom Verwaltungsserver installiert (siehe \ref{einrichtung}) , um lokal abrufbar zu sein. Ihre Funktionen werden im Folgenden kurz erläutert.

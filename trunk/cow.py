@@ -36,6 +36,17 @@ def vmList(hostName, vType):
 	except libvirt.libvirtError:
 		print 'Host ' + hostName + '(' + vType + ') nicht erreichbar'
 
+def vmOffList(hostName, vType):
+	vOffList = []
+	if vType == 'xen':
+		conn = libvirt.open('xen://' + hostName + '/')
+	else:
+		conn = libvirt.open('qemu://' + hostName + '/system')
+
+	for name in conn.listDefinedDomains():
+		vOffList.append(conn.lookupByName(name))
+
+	return vOffList
 
 def vmOnList(hostName, vType):
 	vOnList = []
@@ -77,6 +88,9 @@ def newVServer():
 		vhosts = open(os.path.expanduser('~/.cow/vhosts'), 'a')
 		vhosts.write('\n' + hostName + '\t' + vHostType[choice])
 		vhosts.close()
+		
+		command = ['ssh', 'root@' + hostName, 'mkdir -p ' + binDir ]
+		execute(command)
 
 		command = ['rsync', '-r', 'client-scripts/' ,'root@' + hostName + ':' + binDir]
 		execute(command)
@@ -92,11 +106,11 @@ def newVServer():
 
 		#command = ['./clientcert.sh', hostName]
 		#execute(command)
-		
-		command = ['ssh', 'root@' + hostName, 'mkdir -p ' + binDir ]
-		execute(command)
 
 		command = ['ssh', 'root@' + hostName, binDir + '/whoami.py ' + ip + ' ' + downloadDir + ' ' + imageDir ]
+		execute(command)
+
+		command = ['ssh', 'root@' + hostName, binDir + '/libvirtprep.sh' ]
 		execute(command)
 
 def clone():
